@@ -1,0 +1,378 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlserver"
+  url      = env("DATABASE_URL")
+}
+
+model rf_access_rights {
+  ras_accrights_id                                      Int              @id(map: "PK_rf_access_rights") @default(autoincrement()) @db.SmallInt
+  ras_createdby_id                                      String?          @db.UniqueIdentifier
+  ras_created_date                                      DateTime?        @db.DateTime
+  ras_modifiedby_id                                     String?          @db.UniqueIdentifier
+  ras_modified_date                                     DateTime?        @db.DateTime
+  ras_panel_access                                      Boolean?
+  rf_users_rf_access_rights_ras_createdby_idTorf_users  rf_users?        @relation("rf_access_rights_ras_createdby_idTorf_users", fields: [ras_createdby_id], references: [rsr_user_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_access_rights_rf_users")
+  rf_users_rf_access_rights_ras_modifiedby_idTorf_users rf_users?        @relation("rf_access_rights_ras_modifiedby_idTorf_users", fields: [ras_modifiedby_id], references: [rsr_user_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_access_rights_rf_users1")
+  rf_user_acclvl                                        rf_user_acclvl[]
+
+  @@index([ras_accrights_id, ras_panel_access], map: "IX_rf_access_rights")
+}
+
+model rf_area_list {
+  rfa_area_id                                       Int                  @id(map: "PK_rf_area_list") @default(autoincrement()) @db.SmallInt
+  rfa_area_desc                                     String?              @db.NVarChar(50)
+  rfa_toalarm                                       Boolean?
+  rfa_tocount                                       Boolean?
+  rfa_status_id                                     Int?                 @db.TinyInt
+  rfa_createdby_id                                  String?              @db.UniqueIdentifier
+  rfa_created_date                                  DateTime?            @db.DateTime
+  rfa_modifiedby_id                                 String?              @db.UniqueIdentifier
+  rfd_modified_date                                 DateTime?            @db.DateTime
+  rfa_deleted                                       Boolean?
+  rf_status                                         rf_status?           @relation(fields: [rfa_status_id], references: [rf_status_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_area_list_rf_status")
+  rf_users_rf_area_list_rfa_createdby_idTorf_users  rf_users?            @relation("rf_area_list_rfa_createdby_idTorf_users", fields: [rfa_createdby_id], references: [rsr_user_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_area_list_rf_users")
+  rf_users_rf_area_list_rfa_modifiedby_idTorf_users rf_users?            @relation("rf_area_list_rfa_modifiedby_idTorf_users", fields: [rfa_modifiedby_id], references: [rsr_user_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_area_list_rf_users1")
+  rf_readwriter_list                                rf_readwriter_list[]
+
+  @@index([rfa_area_id, rfa_status_id, rfa_deleted], map: "IX_rf_area_list")
+}
+
+model rf_employee_bldglist {
+  rwa_empbldg_id                                            Int                @id(map: "PK_rf_workerbldg_list") @default(autoincrement()) @db.SmallInt
+  rwa_empbldg_desc                                          String?            @db.NVarChar(50)
+  rwa_createdby_id                                          String?            @db.UniqueIdentifier
+  rwa_created_date                                          DateTime?          @db.DateTime
+  rwa_modifiedby_id                                         String?            @db.UniqueIdentifier
+  rwa_modified_date                                         DateTime?          @db.DateTime
+  rwa_deleted                                               Boolean?
+  rf_users_rf_employee_bldglist_rwa_createdby_idTorf_users  rf_users?          @relation("rf_employee_bldglist_rwa_createdby_idTorf_users", fields: [rwa_createdby_id], references: [rsr_user_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_employee_bldglist_rf_users")
+  rf_users_rf_employee_bldglist_rwa_modifiedby_idTorf_users rf_users?          @relation("rf_employee_bldglist_rwa_modifiedby_idTorf_users", fields: [rwa_modifiedby_id], references: [rsr_user_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_employee_bldglist_rf_users1")
+  rf_employee_list                                          rf_employee_list[]
+
+  @@index([rwa_empbldg_id, rwa_deleted], map: "IX_rf_employee_bldglist")
+}
+
+model rf_employee_board {
+  rbe_id                                                 Int                 @id(map: "PK_rf_employee_board") @default(autoincrement())
+  rbe_emp_id                                             String?             @db.UniqueIdentifier
+  rbe_taginfo_id                                         String?             @db.NVarChar(50)
+  rbe_rwl_id                                             Int?
+  rbe_comment                                            String?             @db.NVarChar(50)
+  rbe_createdby_id                                       String?             @db.UniqueIdentifier
+  rbe_created_date                                       DateTime?           @db.DateTime
+  rbe_modifiedby_id                                      String?             @db.UniqueIdentifier
+  rbe_modified_date                                      DateTime?           @db.DateTime
+  rbe_delete                                             Boolean?
+  rbe_lastupdate_date                                    DateTime?           @db.DateTime
+  rbe_status_id                                          Int?                @db.TinyInt
+  rbe_leave_type                                         Int?                @db.TinyInt
+  rbe_leave_start                                        DateTime?           @db.DateTime
+  rbe_leave_end                                          DateTime?           @db.DateTime
+  rf_employee_list                                       rf_employee_list?   @relation(fields: [rbe_emp_id], references: [rfe_emp_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_employee_board_rf_employee_list")
+  rf_readwriter_list                                     rf_readwriter_list? @relation(fields: [rbe_rwl_id], references: [rwl_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_employee_board_rf_readwriter_list")
+  rf_rfidtag_list                                        rf_rfidtag_list?    @relation(fields: [rbe_taginfo_id], references: [rfd_taginfo_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_employee_board_rf_rfidtag_list")
+  rf_status                                              rf_status?          @relation(fields: [rbe_status_id], references: [rf_status_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_employee_board_rf_status")
+  rf_users_rf_employee_board_rbe_createdby_idTorf_users  rf_users?           @relation("rf_employee_board_rbe_createdby_idTorf_users", fields: [rbe_createdby_id], references: [rsr_user_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_employee_board_rf_users")
+  rf_users_rf_employee_board_rbe_modifiedby_idTorf_users rf_users?           @relation("rf_employee_board_rbe_modifiedby_idTorf_users", fields: [rbe_modifiedby_id], references: [rsr_user_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_employee_board_rf_users1")
+}
+
+model rf_employee_list {
+  rfe_emp_id                                            String                @id(map: "PK_rf_employee") @default(dbgenerated("newid()"), map: "DF_rf_employee_rfe_emp_id") @db.UniqueIdentifier
+  rfe_gid                                               String?               @db.NVarChar(20)
+  rfe_fname                                             String?               @db.NVarChar(50)
+  rfe_lname                                             String?               @db.NVarChar(50)
+  rfe_displayname                                       String?               @db.NVarChar(100)
+  rfe_gender_id                                         Int?                  @db.TinyInt
+  rfe_emp_process_id                                    Int?                  @db.SmallInt
+  rfe_emp_team_id                                       Int?                  @db.TinyInt
+  rfe_emp_bldg_id                                       Int?                  @db.SmallInt
+  rfe_createdby_id                                      String?               @db.UniqueIdentifier
+  rfe_created_date                                      DateTime?             @db.DateTime
+  rfe_modifiedby_id                                     String?               @db.UniqueIdentifier
+  rfe_active                                            Boolean?
+  rfe_deleted                                           Boolean?
+  rfe_emp_rw_id                                         Int?
+  rfe_gid_card                                          String?               @db.NVarChar(20)
+  rf_employee_board                                     rf_employee_board[]
+  rf_employee_bldglist                                  rf_employee_bldglist? @relation(fields: [rfe_emp_bldg_id], references: [rwa_empbldg_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_employee_list_rf_employee_bldglist")
+  rf_employee_proclist                                  rf_employee_proclist? @relation(fields: [rfe_emp_process_id], references: [rwp_empprocess_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_employee_list_rf_employee_proclist")
+  rf_employee_teamlist                                  rf_employee_teamlist? @relation(fields: [rfe_emp_team_id], references: [rte_empteam_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_employee_list_rf_employee_teamlist")
+  rf_gender                                             rf_gender?            @relation(fields: [rfe_gender_id], references: [rfg_gender_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_employee_list_rf_gender")
+  rf_readwriter_list                                    rf_readwriter_list?   @relation(fields: [rfe_emp_rw_id], references: [rwl_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_employee_list_rf_readwriter_list")
+  rf_users_rf_employee_list_rfe_createdby_idTorf_users  rf_users?             @relation("rf_employee_list_rfe_createdby_idTorf_users", fields: [rfe_createdby_id], references: [rsr_user_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_employee_list_rf_users")
+  rf_users_rf_employee_list_rfe_modifiedby_idTorf_users rf_users?             @relation("rf_employee_list_rfe_modifiedby_idTorf_users", fields: [rfe_modifiedby_id], references: [rsr_user_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_employee_list_rf_users1")
+  rf_employee_logs                                      rf_employee_logs[]
+  rf_rfidtag_list                                       rf_rfidtag_list[]
+
+  @@index([rfe_emp_id, rfe_fname, rfe_lname, rfe_displayname, rfe_emp_process_id, rfe_emp_bldg_id, rfe_emp_rw_id, rfe_emp_team_id, rfe_gid, rfe_deleted, rfe_active, rfe_gid_card], map: "IX_rf_employee_list_1")
+}
+
+model rf_employee_logs {
+  rel_id             Int                 @id(map: "PK_rf_employee_logs") @default(autoincrement())
+  rel_emp_id         String?             @db.UniqueIdentifier
+  rel_taginfo_id     String?             @db.NVarChar(50)
+  rel_rwl_id         Int?
+  rel_datetime       DateTime?           @db.DateTime
+  rel_status_id      Int?                @db.TinyInt
+  rf_employee_list   rf_employee_list?   @relation(fields: [rel_emp_id], references: [rfe_emp_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_employee_logs_rf_employee_list")
+  rf_readwriter_list rf_readwriter_list? @relation(fields: [rel_rwl_id], references: [rwl_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_employee_logs_rf_readwriter_list")
+  rf_rfidtag_list    rf_rfidtag_list?    @relation(fields: [rel_taginfo_id], references: [rfd_taginfo_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_employee_logs_rf_rfidtag_list")
+  rf_status          rf_status?          @relation(fields: [rel_status_id], references: [rf_status_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_employee_logs_rf_status")
+
+  @@index([rel_id, rel_emp_id, rel_taginfo_id, rel_rwl_id, rel_status_id, rel_datetime], map: "IX_rf_employee_logs")
+}
+
+model rf_employee_proclist {
+  rwp_empprocess_id                                         Int                @id(map: "PK_rf_workerproc_list") @default(autoincrement()) @db.SmallInt
+  rwp_process_desc                                          String?            @db.NVarChar(50)
+  rwp_createdby_id                                          String?            @db.UniqueIdentifier
+  rwp_created_date                                          DateTime?          @db.DateTime
+  rwp_modifiedby_id                                         String?            @db.UniqueIdentifier
+  rwp_modified_date                                         DateTime?          @db.DateTime
+  rwp_deleted                                               Boolean?
+  rf_employee_list                                          rf_employee_list[]
+  rf_users_rf_employee_proclist_rwp_createdby_idTorf_users  rf_users?          @relation("rf_employee_proclist_rwp_createdby_idTorf_users", fields: [rwp_createdby_id], references: [rsr_user_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_employee_proclist_rf_users")
+  rf_users_rf_employee_proclist_rwp_modifiedby_idTorf_users rf_users?          @relation("rf_employee_proclist_rwp_modifiedby_idTorf_users", fields: [rwp_modifiedby_id], references: [rsr_user_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_employee_proclist_rf_users1")
+
+  @@index([rwp_empprocess_id, rwp_deleted], map: "IX_rf_employee_proclist")
+}
+
+model rf_employee_shiftlist {
+  rfs_empshift_id                                            Int                    @id(map: "PK_rf_workershift_list") @default(autoincrement()) @db.TinyInt
+  rfs_empshift_desc                                          String?                @db.NVarChar(20)
+  rfs_timein                                                 String?                @db.NChar(5)
+  rfs_timeout                                                String?                @db.NChar(5)
+  rfs_createdby_id                                           String?                @db.UniqueIdentifier
+  rfs_created_date                                           DateTime?              @db.DateTime
+  rfs_modifiedby_id                                          String?                @db.UniqueIdentifier
+  rfs_modified_date                                          DateTime?              @db.DateTime
+  rfs_deleted                                                Boolean?
+  rfs_datein                                                 DateTime?              @db.DateTime
+  rfs_dateout                                                DateTime?              @db.DateTime
+  rf_users_rf_employee_shiftlist_rfs_createdby_idTorf_users  rf_users?              @relation("rf_employee_shiftlist_rfs_createdby_idTorf_users", fields: [rfs_createdby_id], references: [rsr_user_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_employee_shiftlist_rf_users")
+  rf_users_rf_employee_shiftlist_rfs_modifiedby_idTorf_users rf_users?              @relation("rf_employee_shiftlist_rfs_modifiedby_idTorf_users", fields: [rfs_modifiedby_id], references: [rsr_user_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_employee_shiftlist_rf_users1")
+  rf_employee_teamlist                                       rf_employee_teamlist[]
+}
+
+model rf_employee_teamlist {
+  rte_empteam_id                                            Int                    @id(map: "PK_rf_team_list") @default(autoincrement()) @db.TinyInt
+  rte_empteam_desc                                          String?                @db.NVarChar(20)
+  rte_empshift_id                                           Int?                   @db.TinyInt
+  rte_createdby_id                                          String?                @db.UniqueIdentifier
+  rte_created_date                                          DateTime?              @db.DateTime
+  rte_modifiedby_id                                         String?                @db.UniqueIdentifier
+  rte_modified_date                                         DateTime?              @db.DateTime
+  rte_deleted                                               Boolean?
+  rf_employee_list                                          rf_employee_list[]
+  rf_employee_shiftlist                                     rf_employee_shiftlist? @relation(fields: [rte_empshift_id], references: [rfs_empshift_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_employee_teamlist_rf_employee_shiftlist")
+  rf_users_rf_employee_teamlist_rte_modifiedby_idTorf_users rf_users?              @relation("rf_employee_teamlist_rte_modifiedby_idTorf_users", fields: [rte_modifiedby_id], references: [rsr_user_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_employee_teamlist_rf_users")
+  rf_users_rf_employee_teamlist_rte_createdby_idTorf_users  rf_users?              @relation("rf_employee_teamlist_rte_createdby_idTorf_users", fields: [rte_createdby_id], references: [rsr_user_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_employee_teamlist_rf_users1")
+
+  @@index([rte_empteam_id, rte_empshift_id, rte_deleted, rte_empteam_desc], map: "IX_rf_employee_teamlist")
+}
+
+model rf_gender {
+  rfg_gender_id                                  Int                @id(map: "PK_rf_gender") @default(autoincrement()) @db.TinyInt
+  rfg_gender                                     String?            @db.NVarChar(20)
+  rfg_createdby_id                               String?            @db.UniqueIdentifier
+  rfg_created_date                               DateTime?          @db.DateTime
+  rfg_modifiedby_id                              String?            @db.UniqueIdentifier
+  rfg_modified_date                              DateTime?          @db.DateTime
+  rfg_deleted                                    Boolean?
+  rf_employee_list                               rf_employee_list[]
+  rf_users_rf_gender_rfg_createdby_idTorf_users  rf_users?          @relation("rf_gender_rfg_createdby_idTorf_users", fields: [rfg_createdby_id], references: [rsr_user_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_gender_rf_users")
+  rf_users_rf_gender_rfg_modifiedby_idTorf_users rf_users?          @relation("rf_gender_rfg_modifiedby_idTorf_users", fields: [rfg_modifiedby_id], references: [rsr_user_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_gender_rf_users1")
+
+  @@index([rfg_gender_id, rfg_deleted], map: "IX_rf_gender")
+}
+
+model rf_read_tags {
+  rrt_id                String                 @id(map: "PK_rf_read_tags") @default(dbgenerated("newid()"), map: "DF_rf_read_tags_rrt_id") @db.UniqueIdentifier
+  rrt_timestamp         DateTime?              @db.DateTime
+  rrt_rw_id             String?                @db.NVarChar(50)
+  rrt_ant_id            Int?                   @db.TinyInt
+  rrt_ant_lvl           Float?
+  rrt_tag_info          String?                @db.NVarChar(50)
+  rrt_taginfo_hex       Bytes?                 @db.VarBinary(50)
+  rf_receiver_eventlist rf_receiver_eventlist? @relation(fields: [rrt_rw_id], references: [rev_rw_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_read_tags_rf_receiver_eventlist")
+  rf_rfidtag_list       rf_rfidtag_list?       @relation(fields: [rrt_tag_info], references: [rfd_taginfo_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_read_tags_rf_rfidtag_list")
+
+  @@index([rrt_id, rrt_rw_id, rrt_ant_id, rrt_tag_info, rrt_timestamp], map: "IX_rf_read_tags")
+}
+
+model rf_readwriter_list {
+  rwl_id                                                  Int                 @id(map: "PK_rf_readwrite_list") @default(autoincrement())
+  rwl_rw_id                                               String?             @db.NVarChar(50)
+  rwl_ant_id                                              Int?                @db.TinyInt
+  rwl_rwlocation_id                                       Int?                @db.TinyInt
+  rwl_area_id                                             Int?                @db.SmallInt
+  rwl_is_antenna                                          Boolean?
+  rwl_createdby_id                                        String?             @db.UniqueIdentifier
+  rwl_create_date                                         DateTime?           @db.DateTime
+  rwl_modifiedby_id                                       String?             @db.UniqueIdentifier
+  rwl_modified_date                                       DateTime?           @db.DateTime
+  rwl_deleted                                             Boolean?
+  rf_employee_board                                       rf_employee_board[]
+  rf_employee_list                                        rf_employee_list[]
+  rf_employee_logs                                        rf_employee_logs[]
+  rf_area_list                                            rf_area_list?       @relation(fields: [rwl_area_id], references: [rfa_area_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_readwriter_list_rf_area_list")
+  rf_rwlocation_list                                      rf_rwlocation_list? @relation(fields: [rwl_rwlocation_id], references: [rfb_rw_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_readwriter_list_rf_rwlocation_list")
+  rf_users_rf_readwriter_list_rwl_createdby_idTorf_users  rf_users?           @relation("rf_readwriter_list_rwl_createdby_idTorf_users", fields: [rwl_createdby_id], references: [rsr_user_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_readwriter_list_rf_users")
+  rf_users_rf_readwriter_list_rwl_modifiedby_idTorf_users rf_users?           @relation("rf_readwriter_list_rwl_modifiedby_idTorf_users", fields: [rwl_modifiedby_id], references: [rsr_user_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_readwriter_list_rf_users1")
+
+  @@index([rwl_id, rwl_ant_id, rwl_area_id, rwl_rw_id, rwl_rwlocation_id, rwl_deleted, rwl_is_antenna], map: "IX_rf_readwriter_list")
+}
+
+model rf_receiver_eventlist {
+  rev_rw_id         String         @id(map: "PK_rf_receiver_eventlist") @db.NVarChar(50)
+  rev_createdby_id  String?        @db.UniqueIdentifier
+  rev_created_date  DateTime?      @db.DateTime
+  rev_modifiedby_id String?        @db.UniqueIdentifier
+  rev_modified_date DateTime?      @db.DateTime
+  rev_deleted       Boolean?
+  rf_read_tags      rf_read_tags[]
+}
+
+model rf_rfidtag_list {
+  rfd_taginfo_id                                       String              @id(map: "PK_rf_rfidtag_list") @db.NVarChar(50)
+  rfd_emp_id                                           String?             @db.UniqueIdentifier
+  rfd_active                                           Boolean?
+  rfd_createdby_id                                     String?             @db.UniqueIdentifier
+  rfd_created_date                                     DateTime?           @db.DateTime
+  rfd_modifiedby_id                                    String?             @db.UniqueIdentifier
+  rfd_modified_date                                    DateTime?           @db.DateTime
+  rfd_deleted                                          Boolean?
+  rf_employee_board                                    rf_employee_board[]
+  rf_employee_logs                                     rf_employee_logs[]
+  rf_read_tags                                         rf_read_tags[]
+  rf_employee_list                                     rf_employee_list?   @relation(fields: [rfd_emp_id], references: [rfe_emp_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_rfidtag_list_rf_employee_list")
+  rf_users_rf_rfidtag_list_rfd_createdby_idTorf_users  rf_users?           @relation("rf_rfidtag_list_rfd_createdby_idTorf_users", fields: [rfd_createdby_id], references: [rsr_user_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_rfidtag_list_rf_users")
+  rf_users_rf_rfidtag_list_rfd_modifiedby_idTorf_users rf_users?           @relation("rf_rfidtag_list_rfd_modifiedby_idTorf_users", fields: [rfd_modifiedby_id], references: [rsr_user_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_rfidtag_list_rf_users1")
+
+  @@index([rfd_taginfo_id, rfd_emp_id, rfd_active, rfd_deleted], map: "IX_rf_rfidtag_list")
+}
+
+model rf_rwlocation_list {
+  rfb_rw_id                                               Int                  @id(map: "PK_rf_rwlocation_list") @default(autoincrement()) @db.TinyInt
+  rfb_rwlocation_desc                                     String?              @db.NVarChar(50)
+  rfb_floor                                               String?              @db.NVarChar(20)
+  rfb_createdby_id                                        String?              @db.UniqueIdentifier
+  rfb_created_date                                        DateTime?            @db.DateTime
+  rfd_modifiedby_id                                       String?              @db.UniqueIdentifier
+  rfd_modified_date                                       DateTime?            @db.DateTime
+  rfb_deleted                                             Boolean?
+  rf_readwriter_list                                      rf_readwriter_list[]
+  rf_users_rf_rwlocation_list_rfb_createdby_idTorf_users  rf_users?            @relation("rf_rwlocation_list_rfb_createdby_idTorf_users", fields: [rfb_createdby_id], references: [rsr_user_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_rwlocation_list_rf_users")
+  rf_users_rf_rwlocation_list_rfd_modifiedby_idTorf_users rf_users?            @relation("rf_rwlocation_list_rfd_modifiedby_idTorf_users", fields: [rfd_modifiedby_id], references: [rsr_user_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_rwlocation_list_rf_users1")
+
+  @@index([rfb_rw_id, rfb_deleted], map: "IX_rf_rwlocation_list")
+}
+
+model rf_status {
+  rf_status_id                                   Int                 @id(map: "PK_rf_status") @default(autoincrement()) @db.TinyInt
+  rfs_sign                                       String?             @db.NVarChar(50)
+  rfs_createdby_id                               String?             @db.UniqueIdentifier
+  rfs_created_date                               DateTime?           @db.DateTime
+  rfs_modifiedby_id                              String?             @db.UniqueIdentifier
+  rfs_modified_date                              DateTime?           @db.DateTime
+  rfs_deleted                                    Boolean?
+  rf_area_list                                   rf_area_list[]
+  rf_employee_board                              rf_employee_board[]
+  rf_employee_logs                               rf_employee_logs[]
+  rf_users_rf_status_rfs_createdby_idTorf_users  rf_users?           @relation("rf_status_rfs_createdby_idTorf_users", fields: [rfs_createdby_id], references: [rsr_user_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_status_rf_users")
+  rf_users_rf_status_rfs_modifiedby_idTorf_users rf_users?           @relation("rf_status_rfs_modifiedby_idTorf_users", fields: [rfs_modifiedby_id], references: [rsr_user_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_status_rf_users1")
+
+  @@index([rf_status_id, rfs_sign, rfs_deleted], map: "IX_rf_status")
+}
+
+model rf_temp_gatedata {
+  rgd_id           String    @id(map: "PK_rf_temp_gatedata") @default(dbgenerated("newid()"), map: "DF_rf_temp_gatedata_rgd_id") @db.UniqueIdentifier
+  rgd_date         DateTime? @db.DateTime
+  rgd_gate         String?   @db.NVarChar(20)
+  rgd_gid          String?   @db.NVarChar(20)
+  rgd_status_rwlid Int?
+
+  @@index([rgd_id, rgd_date, rgd_gid, rgd_status_rwlid], map: "IX_rf_temp_gatedata")
+}
+
+model rf_temp_leavedata {
+  rdt_id              String    @id(map: "PK_rf_temp_leavedata") @default(dbgenerated("newid()"), map: "DF_rf_temp_leavedata_rdt_id") @db.UniqueIdentifier
+  rdt_date            DateTime? @db.Date
+  rdt_gid             String?   @db.NVarChar(20)
+  rdt_team            String?   @db.NVarChar(10)
+  rdt_leavetype_rwild Int?      @db.TinyInt
+}
+
+model rf_temp_shiftdata {
+  rwt_id             String    @id(map: "PK_rf_temp_shiftdata") @default(dbgenerated("newid()"), map: "DF_rf_temp_shiftdata_rwt_id") @db.UniqueIdentifier
+  rwt_base           Int?      @db.SmallInt
+  rwt_date           DateTime? @db.DateTime
+  rwt_workerteam_id  Int?      @db.TinyInt
+  rwt_workershift_id Int?      @db.TinyInt
+
+  @@index([rwt_id, rwt_date, rwt_workershift_id, rwt_workerteam_id], map: "IX_rf_temp_shiftdata")
+}
+
+model rf_user_acclvl {
+  ral_acclvl_id                                       Int               @id(map: "PK_rf_user_acclvl") @default(autoincrement()) @db.SmallInt
+  ral_acclvl_desc                                     String?           @db.NVarChar(50)
+  ral_accrights_id                                    Int?              @db.SmallInt
+  ral_createdby_id                                    String?           @db.UniqueIdentifier
+  ral_created_date                                    DateTime?         @db.DateTime
+  ral_modifiedby_id                                   String?           @db.UniqueIdentifier
+  ral_modified_date                                   DateTime?         @db.DateTime
+  rf_access_rights                                    rf_access_rights? @relation(fields: [ral_accrights_id], references: [ras_accrights_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_user_acclvl_rf_access_rights")
+  rf_users_rf_user_acclvl_ral_createdby_idTorf_users  rf_users?         @relation("rf_user_acclvl_ral_createdby_idTorf_users", fields: [ral_createdby_id], references: [rsr_user_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_user_acclvl_rf_users")
+  rf_users_rf_user_acclvl_ral_modifiedby_idTorf_users rf_users?         @relation("rf_user_acclvl_ral_modifiedby_idTorf_users", fields: [ral_modifiedby_id], references: [rsr_user_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_user_acclvl_rf_users2")
+  rf_users_rf_users_rsr_acclvl_idTorf_user_acclvl     rf_users[]        @relation("rf_users_rsr_acclvl_idTorf_user_acclvl")
+
+  @@index([ral_acclvl_id, ral_accrights_id], map: "IX_rf_user_acclvl")
+}
+
+model rf_users {
+  rsr_user_id                                                             String                  @id(map: "PK_rf_users") @default(dbgenerated("newid()"), map: "DF_Table_1_rsr_user_id") @db.UniqueIdentifier
+  rsr_gid                                                                 String?                 @db.NVarChar(20)
+  rsr_fname                                                               String?                 @db.NVarChar(50)
+  rsr_lname                                                               String?                 @db.NVarChar(50)
+  rsr_acclvl_id                                                           Int?                    @db.SmallInt
+  rsr_createdby_id                                                        String?                 @db.UniqueIdentifier
+  rsr_created_date                                                        DateTime?               @db.DateTime
+  rsr_modifiedby_id                                                       String?                 @db.UniqueIdentifier
+  rsr_modified_date                                                       DateTime?               @db.DateTime
+  rsr_deleted                                                             Boolean?
+  rf_access_rights_rf_access_rights_ras_createdby_idTorf_users            rf_access_rights[]      @relation("rf_access_rights_ras_createdby_idTorf_users")
+  rf_access_rights_rf_access_rights_ras_modifiedby_idTorf_users           rf_access_rights[]      @relation("rf_access_rights_ras_modifiedby_idTorf_users")
+  rf_area_list_rf_area_list_rfa_createdby_idTorf_users                    rf_area_list[]          @relation("rf_area_list_rfa_createdby_idTorf_users")
+  rf_area_list_rf_area_list_rfa_modifiedby_idTorf_users                   rf_area_list[]          @relation("rf_area_list_rfa_modifiedby_idTorf_users")
+  rf_employee_bldglist_rf_employee_bldglist_rwa_createdby_idTorf_users    rf_employee_bldglist[]  @relation("rf_employee_bldglist_rwa_createdby_idTorf_users")
+  rf_employee_bldglist_rf_employee_bldglist_rwa_modifiedby_idTorf_users   rf_employee_bldglist[]  @relation("rf_employee_bldglist_rwa_modifiedby_idTorf_users")
+  rf_employee_board_rf_employee_board_rbe_createdby_idTorf_users          rf_employee_board[]     @relation("rf_employee_board_rbe_createdby_idTorf_users")
+  rf_employee_board_rf_employee_board_rbe_modifiedby_idTorf_users         rf_employee_board[]     @relation("rf_employee_board_rbe_modifiedby_idTorf_users")
+  rf_employee_list_rf_employee_list_rfe_createdby_idTorf_users            rf_employee_list[]      @relation("rf_employee_list_rfe_createdby_idTorf_users")
+  rf_employee_list_rf_employee_list_rfe_modifiedby_idTorf_users           rf_employee_list[]      @relation("rf_employee_list_rfe_modifiedby_idTorf_users")
+  rf_employee_proclist_rf_employee_proclist_rwp_createdby_idTorf_users    rf_employee_proclist[]  @relation("rf_employee_proclist_rwp_createdby_idTorf_users")
+  rf_employee_proclist_rf_employee_proclist_rwp_modifiedby_idTorf_users   rf_employee_proclist[]  @relation("rf_employee_proclist_rwp_modifiedby_idTorf_users")
+  rf_employee_shiftlist_rf_employee_shiftlist_rfs_createdby_idTorf_users  rf_employee_shiftlist[] @relation("rf_employee_shiftlist_rfs_createdby_idTorf_users")
+  rf_employee_shiftlist_rf_employee_shiftlist_rfs_modifiedby_idTorf_users rf_employee_shiftlist[] @relation("rf_employee_shiftlist_rfs_modifiedby_idTorf_users")
+  rf_employee_teamlist_rf_employee_teamlist_rte_modifiedby_idTorf_users   rf_employee_teamlist[]  @relation("rf_employee_teamlist_rte_modifiedby_idTorf_users")
+  rf_employee_teamlist_rf_employee_teamlist_rte_createdby_idTorf_users    rf_employee_teamlist[]  @relation("rf_employee_teamlist_rte_createdby_idTorf_users")
+  rf_gender_rf_gender_rfg_createdby_idTorf_users                          rf_gender[]             @relation("rf_gender_rfg_createdby_idTorf_users")
+  rf_gender_rf_gender_rfg_modifiedby_idTorf_users                         rf_gender[]             @relation("rf_gender_rfg_modifiedby_idTorf_users")
+  rf_readwriter_list_rf_readwriter_list_rwl_createdby_idTorf_users        rf_readwriter_list[]    @relation("rf_readwriter_list_rwl_createdby_idTorf_users")
+  rf_readwriter_list_rf_readwriter_list_rwl_modifiedby_idTorf_users       rf_readwriter_list[]    @relation("rf_readwriter_list_rwl_modifiedby_idTorf_users")
+  rf_rfidtag_list_rf_rfidtag_list_rfd_createdby_idTorf_users              rf_rfidtag_list[]       @relation("rf_rfidtag_list_rfd_createdby_idTorf_users")
+  rf_rfidtag_list_rf_rfidtag_list_rfd_modifiedby_idTorf_users             rf_rfidtag_list[]       @relation("rf_rfidtag_list_rfd_modifiedby_idTorf_users")
+  rf_rwlocation_list_rf_rwlocation_list_rfb_createdby_idTorf_users        rf_rwlocation_list[]    @relation("rf_rwlocation_list_rfb_createdby_idTorf_users")
+  rf_rwlocation_list_rf_rwlocation_list_rfd_modifiedby_idTorf_users       rf_rwlocation_list[]    @relation("rf_rwlocation_list_rfd_modifiedby_idTorf_users")
+  rf_status_rf_status_rfs_createdby_idTorf_users                          rf_status[]             @relation("rf_status_rfs_createdby_idTorf_users")
+  rf_status_rf_status_rfs_modifiedby_idTorf_users                         rf_status[]             @relation("rf_status_rfs_modifiedby_idTorf_users")
+  rf_user_acclvl_rf_user_acclvl_ral_createdby_idTorf_users                rf_user_acclvl[]        @relation("rf_user_acclvl_ral_createdby_idTorf_users")
+  rf_user_acclvl_rf_user_acclvl_ral_modifiedby_idTorf_users               rf_user_acclvl[]        @relation("rf_user_acclvl_ral_modifiedby_idTorf_users")
+  rf_user_acclvl_rf_users_rsr_acclvl_idTorf_user_acclvl                   rf_user_acclvl?         @relation("rf_users_rsr_acclvl_idTorf_user_acclvl", fields: [rsr_acclvl_id], references: [ral_acclvl_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_users_rf_user_acclvl")
+
+  @@index([rsr_user_id, rsr_acclvl_id, rsr_gid, rsr_deleted], map: "IX_rf_users")
+}
+
