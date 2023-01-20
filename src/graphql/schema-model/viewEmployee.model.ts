@@ -11,7 +11,7 @@ export class EmployeeBoard {
   tagID: string
 
   @Field({ nullable: true })
-  lastUpdate?: Date  
+  lastUpdate?: string  
   
   @Field({ nullable: true }) 
   timeElapse?: string

@@ -4,7 +4,7 @@
 export interface IViewEmployeeBoard {
     empID: string
     tagID: string
-    lastUpdate: Date | null  
+    lastUpdate: string | null  
     timeElapse: string | null
     displayName: string | null
     statusID: number | null

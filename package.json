@@ -33,6 +33,7 @@
     "cache-manager-redis-store": "^3.0.1",
     "cluster": "^0.7.7",
     "graphql": "^16.6.0",
+    "graphql-subscriptions": "^2.0.0",
     "helmet": "^6.0.1",
     "ioredis": "^5.2.5",
     "os": "^0.1.2",

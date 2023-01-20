@@ -26,12 +26,15 @@ const errorCodeReplace = (err: IErrorMsg): string => {
       ttl: 5,
     }),
     GraphQLModule.forRoot<ApolloDriverConfig>({
-      driver: ApolloDriver,
+      driver: ApolloDriver, 
       playground: false,
       plugins: [ApolloServerPluginLandingPageLocalDefault()],
       autoSchemaFile: true,
       transformSchema: (schema) => upperDirectiveTransformer(schema, 'upper'),
-      installSubscriptionHandlers: true,
+      subscriptions: {
+        'graphql-ws': true,
+        'subscriptions-transport-ws': true,
+      },
       buildSchemaOptions: {
         directives: [
           new GraphQLDirective({
@@ -40,6 +43,7 @@ const errorCodeReplace = (err: IErrorMsg): string => {
           }),
         ],
       },
+      installSubscriptionHandlers: true,
       formatError: (error: GraphQLError) => {
         const graphQLFormattedError: IErrorMsg = {
           message: errorCodeReplace(error),
