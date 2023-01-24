@@ -28,3 +28,14 @@ export interface IViewEmployeeBoard {
     leaveType: number | null
     
   }
+
+
+  export interface IPayloadEmployeeBoard   {
+    EmployeeBoardAllSub : IViewEmployeeBoard[]
+  } 
+
+  export interface IEmployeeBoardArgs {
+    areaID?: number | null
+    teamID?: number | null
+    locID?: number | null
+  }

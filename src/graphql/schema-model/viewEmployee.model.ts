@@ -76,3 +76,10 @@ export class EmployeeBoard {
   @Field(type => Int, { nullable: true })
   leaveType?: number
 }
+
+@ObjectType()
+export class EmployeeBoardAllSub { 
+  @Field( type => [EmployeeBoard],{ nullable: true })
+  EmployeeBoardAllSub: EmployeeBoard[]
+}
+ 
