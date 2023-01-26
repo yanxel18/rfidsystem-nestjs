@@ -1,12 +1,4 @@
-import {
-  Args,
-  Context,
-  Int,
-  Mutation,
-  Query,
-  Resolver,
-  Subscription,
-} from '@nestjs/graphql';
+import { Args, Context, Query, Resolver, Subscription } from '@nestjs/graphql';
 import { EmployeeBoard } from '../schema-model/viewEmployee.model';
 import {
   IEmployeeBoardArgs,
@@ -40,10 +32,11 @@ export class EmpResolver {
   async EmployeeBoardAll(
     @Args() args: EmployeeBoardArgs,
   ): Promise<IViewEmployeeBoard[] | []> {
-    const cacheData: IPayloadEmployeeBoard = await this.cache.get(
-      'employeeAllView',
-    );
-    return payloadFilter(cacheData, args);
+    // const cacheData: IPayloadEmployeeBoard = await this.cache.get(
+    //   'employeeAllView',
+    // );
+    // return payloadFilter(cacheData, args);
+    return [];
   }
 
   @Subscription((returns) => [EmployeeBoard], {
@@ -78,5 +71,16 @@ function payloadFilter(
     EmployeeBoardAllSub = EmployeeBoardAllSub.filter(
       (i) => i.teamID === variables.teamID,
     );
-  return EmployeeBoardAllSub || [];
+  if (variables.pageoffset) {
+    const pagenumber: number =
+      variables.pagenum === 1
+        ? 0
+        : variables.pagenum * variables.pageoffset - variables.pageoffset;
+    const pageoffset: number =
+      variables.pagenum === 1
+        ? variables.pageoffset
+        : variables.pagenum * variables.pageoffset;
+    EmployeeBoardAllSub = EmployeeBoardAllSub.slice(pagenumber, pageoffset);
+  }
+  return EmployeeBoardAllSub;
 }

@@ -19,6 +19,7 @@ export interface IViewEmployeeBoard {
     locID: number | null
     locDesc: string | null
     floor: string | null
+    buildloc: string | null
     empProcessID: number | null
     processName: string | null
     teamID: number | null
@@ -26,7 +27,6 @@ export interface IViewEmployeeBoard {
     leaveStart: Date | null
     leaveEnd: Date | null
     leaveType: number | null
-    
   }
 
 
@@ -38,4 +38,6 @@ export interface IViewEmployeeBoard {
     areaID?: number | null
     teamID?: number | null
     locID?: number | null
+    pageoffset?: number | null
+    pagenum?: number | null
   }

@@ -55,6 +55,9 @@ export class EmployeeBoard {
   @Field({ nullable: true })
   floor?: string
 
+  @Field({ nullable: true })
+  buildloc?: string
+
   @Field(type => Int, { nullable: true })
   empProcessID?: number
 
