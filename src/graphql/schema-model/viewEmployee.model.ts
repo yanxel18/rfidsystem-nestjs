@@ -1,88 +1,93 @@
- 
 import { Field, Int, ObjectType } from '@nestjs/graphql';
- 
 
 @ObjectType()
-export class EmployeeBoard { 
+export class EmployeeBoard {
   @Field()
-  empID: string
+  empID: string;
 
   @Field()
-  tagID: string
+  tagID: string;
 
   @Field({ nullable: true })
-  lastUpdate?: string  
-  
-  @Field({ nullable: true }) 
-  timeElapse?: string
+  lastUpdate?: string;
 
   @Field({ nullable: true })
-  displayName?: string 
+  timeElapse?: string;
+
+  @Field({ nullable: true })
+  displayName?: string;
 
   @Field(() => Int)
-  statusID: number
+  statusID: number;
 
   @Field({ nullable: true })
-  sign?: string
+  sign?: string;
 
-  @Field(type => Int, { nullable: true })
-  readwriterID?: number
-
-  @Field({ nullable: true })
-  comment?: string
-
-  @Field(type => Int, { nullable: true })
-  areaID?: number
+  @Field((type) => Int, { nullable: true })
+  readwriterID?: number;
 
   @Field({ nullable: true })
-  areaDesc?: string
+  comment?: string;
 
-  @Field(type => Int, { nullable: true })
-  alarm?: number
-
-  @Field(type => Int, { nullable: true })
-  setAlarm?: number
-
-  @Field(type => Int, { nullable: true })
-  setCount?: number
-
-  @Field(type => Int, { nullable: true })
-  locID?: number
+  @Field((type) => Int, { nullable: true })
+  areaID?: number;
 
   @Field({ nullable: true })
-  locDesc?: string
+  areaDesc?: string;
+
+  @Field((type) => Int, { nullable: true })
+  alarm?: number;
+
+  @Field((type) => Int, { nullable: true })
+  setAlarm?: number;
+
+  @Field((type) => Int, { nullable: true })
+  setCount?: number;
+
+  @Field((type) => Int, { nullable: true })
+  locID?: number;
 
   @Field({ nullable: true })
-  floor?: string
+  locDesc?: string;
 
   @Field({ nullable: true })
-  buildloc?: string
-
-  @Field(type => Int, { nullable: true })
-  empProcessID?: number
+  floor?: string;
 
   @Field({ nullable: true })
-  processName?: string
+  buildloc?: string;
 
-  @Field(type => Int, { nullable: true })
-  teamID?: number | null
-
-  @Field({ nullable: true })
-  teamName?: string
+  @Field((type) => Int, { nullable: true })
+  empProcessID?: number;
 
   @Field({ nullable: true })
-  leaveStart?: Date
+  processName?: string;
+
+  @Field((type) => Int, { nullable: true })
+  teamID?: number | null;
 
   @Field({ nullable: true })
-  leaveEnd?: Date
+  teamName?: string;
 
-  @Field(type => Int, { nullable: true })
-  leaveType?: number
+  @Field({ nullable: true })
+  leaveStart?: Date;
+
+  @Field({ nullable: true })
+  leaveEnd?: Date;
+
+  @Field((type) => Int, { nullable: true })
+  leaveType?: number;
+
 }
 
 @ObjectType()
-export class EmployeeBoardAllSub { 
-  @Field( type => [EmployeeBoard],{ nullable: true })
-  EmployeeBoardAllSub: EmployeeBoard[]
+export class EmployeeBoardAllSub {
+  @Field((type) => [EmployeeBoard], { nullable: true })
+  EmployeeBoardAllSub: EmployeeBoard[];
+}
+
+@ObjectType()
+export class EmployeeBoardCount {
+  @Field((type) => Int, { nullable: true })
+  EmpCount?: number;
 }
  

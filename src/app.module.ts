@@ -10,6 +10,7 @@ import { DirectiveLocation, GraphQLDirective, GraphQLError } from 'graphql';
 import { upperDirectiveTransformer } from './graphql/common/directives/upper-case.directive';
 import { IErrorMsg } from './model/viewModel/generalModel';
 import { EmployeeBoardViewLoop } from './interval-data/employeeboard-interval';
+import { ViewDropListResolver } from './graphql/resolver/viewDropList.resolver';
 
 const errorCodeReplace = (err: IErrorMsg): string => {
   if (err.message.includes('database connection'))
@@ -55,6 +56,6 @@ const errorCodeReplace = (err: IErrorMsg): string => {
     }),
   ],
   controllers: [AppController],
-  providers: [AppService, PrismaService, EmpResolver, EmployeeBoardViewLoop],
+  providers: [AppService, PrismaService, EmpResolver,ViewDropListResolver, EmployeeBoardViewLoop],
 })
 export class AppModule {}

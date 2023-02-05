@@ -1,4 +1,4 @@
-import { Args, Context, Query, Resolver, Subscription } from '@nestjs/graphql';
+import { Args, Context, Int, Query, Resolver, Subscription } from '@nestjs/graphql';
 import { EmployeeBoard } from '../schema-model/viewEmployee.model';
 import {
   IEmployeeBoardArgs,
@@ -28,6 +28,23 @@ export class EmpResolver {
     }, 1000);
   }
 
+  @Query((returns) => Int, { nullable: true })
+  async EmpCount(): Promise<Number | null> {
+    const cacheData: IPayloadEmployeeBoard = await this.cache.get(
+      'employeeAllView',
+    ); 
+    return Object.keys(cacheData.EmployeeBoardAllSub).length;
+  }
+
+  @Query((returns) => Int)
+  async EmpBoardMaxCountFilter(
+    @Args() args: EmployeeBoardArgs,
+  ): Promise<Number | null> { 
+    const cacheData : IPayloadEmployeeBoard=  await this.cache.get(
+      'employeeAllView',
+    );  
+    return cacheData ? (payloadFilter(cacheData,args)).length : 0;
+  } 
   @Query((returns) => [EmployeeBoard])
   async EmployeeBoardAll(
     @Args() args: EmployeeBoardArgs,
@@ -84,3 +101,4 @@ function payloadFilter(
   }
   return EmployeeBoardAllSub;
 }
+ 

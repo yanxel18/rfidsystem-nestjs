@@ -24,4 +24,4 @@ export class EmployeeBoardViewLoop {
       // this.pubSub.publish('employeeAllViewx', { returndata});
     }, 1000);
   }
-}  
+} 
