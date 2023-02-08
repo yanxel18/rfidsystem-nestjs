@@ -1,8 +1,19 @@
-import { Args, Context, Int, Query, Resolver, Subscription } from '@nestjs/graphql';
-import { EmployeeBoard } from '../schema-model/viewEmployee.model';
+import {
+  Args,
+  Context,
+  Int,
+  Query,
+  Resolver,
+  Subscription,
+} from '@nestjs/graphql';
+import {
+  EmployeeBoard,
+  EmployeeBoardAllSub,
+} from '../schema-model/viewEmployee.model';
 import {
   IEmployeeBoardArgs,
   IPayloadEmployeeBoard,
+  IPayloadEmployeeBoardWithRatio,
   IViewEmployeeBoard,
 } from 'src/model/viewModel/viewTableModel';
 import { AppService } from 'src/app.service';
@@ -11,7 +22,7 @@ import { CACHE_MANAGER, Inject } from '@nestjs/common';
 import { EmployeeBoardArgs } from '../args/common-args';
 import { PubSub } from 'graphql-subscriptions';
 
-@Resolver(() => EmployeeBoard)
+@Resolver(() => EmployeeBoardAllSub)
 export class EmpResolver {
   pubSub = new PubSub();
   constructor(
@@ -20,11 +31,11 @@ export class EmpResolver {
     private cache: Cache,
   ) {
     setInterval(async () => {
-      const cacheData: IPayloadEmployeeBoard[] = await this.cache.get(
+      const cacheData: IPayloadEmployeeBoardWithRatio = await this.cache.get(
         'employeeAllView',
       );
-      let returnCachedData: IPayloadEmployeeBoard[] = cacheData;
-      this.pubSub.publish('employeeAllViewx', returnCachedData);
+      // let returnCachedData: IPayloadEmployeeBoard[] = cacheData;
+      this.pubSub.publish('employeeAllViewx', cacheData);
     }, 1000);
   }
 
@@ -32,33 +43,37 @@ export class EmpResolver {
   async EmpCount(): Promise<Number | null> {
     const cacheData: IPayloadEmployeeBoard = await this.cache.get(
       'employeeAllView',
-    ); 
+    );
     return Object.keys(cacheData.EmployeeBoardAllSub).length;
   }
 
   @Query((returns) => Int)
   async EmpBoardMaxCountFilter(
     @Args() args: EmployeeBoardArgs,
-  ): Promise<Number | null> { 
-    const cacheData : IPayloadEmployeeBoard=  await this.cache.get(
+  ): Promise<Number | null> {
+    const cacheData: IPayloadEmployeeBoardWithRatio = await this.cache.get(
       'employeeAllView',
-    );  
-    return cacheData ? (payloadFilter(cacheData,args)).length : 0;
-  } 
-  @Query((returns) => [EmployeeBoard])
+    );
+    return cacheData
+      ? payloadFilter(cacheData, args).EmployeeBoardAllSub
+          .length
+      : 0;
+  }
+  @Query((returns) => EmployeeBoardAllSub )
   async EmployeeBoardAll(
     @Args() args: EmployeeBoardArgs,
-  ): Promise<IViewEmployeeBoard[] | []> {
-    // const cacheData: IPayloadEmployeeBoard = await this.cache.get(
-    //   'employeeAllView',
-    // );
-    // return payloadFilter(cacheData, args);
+  ): Promise<IPayloadEmployeeBoardWithRatio | []> {
+    const cacheData: IPayloadEmployeeBoardWithRatio = await this.cache.get(
+      'employeeAllView',
+    );
+ 
     return [];
+ 
   }
 
-  @Subscription((returns) => [EmployeeBoard], {
+  @Subscription((returns) => EmployeeBoardAllSub, {
     resolve: (
-      payload: IPayloadEmployeeBoard,
+      payload: IPayloadEmployeeBoardWithRatio,
       variables: IEmployeeBoardArgs,
     ) => {
       return payloadFilter(payload, variables);
@@ -72,23 +87,29 @@ export class EmpResolver {
   }
 }
 function payloadFilter(
-  payload: IPayloadEmployeeBoard,
+  payload: IPayloadEmployeeBoardWithRatio,
   variables: IEmployeeBoardArgs,
-): IViewEmployeeBoard[] | [] {
-  let EmployeeBoardAllSub = payload.EmployeeBoardAllSub;
+): IPayloadEmployeeBoardWithRatio {
+  let newPayload = payload.EmployeeBoardAllSub;
+  let currentWorkerCount = 0;
+  let totalWorkerCount = 0;
+  let currentPercent: string = "0/0";
   if (variables.areaID)
-    EmployeeBoardAllSub = EmployeeBoardAllSub.filter(
-      (i) => i.areaID === variables.areaID,
-    );
+    newPayload = newPayload.filter((i) => i.empArea === variables.areaID);
   if (variables.locID)
-    EmployeeBoardAllSub = EmployeeBoardAllSub.filter(
-      (i) => i.locID === variables.locID,
-    );
+    newPayload = newPayload.filter((i) => i.empLoc === variables.locID);
   if (variables.teamID)
-    EmployeeBoardAllSub = EmployeeBoardAllSub.filter(
-      (i) => i.teamID === variables.teamID,
-    );
+    newPayload = newPayload.filter((i) => i.teamID === variables.teamID);
+
+  
+    currentWorkerCount = newPayload.filter(x => x.statusID === 1).length;
+    totalWorkerCount = newPayload.length;
+    currentPercent =  `${totalWorkerCount !== 0 ? (Math.round(currentWorkerCount / totalWorkerCount * 100)).toString() : 0}%`;
+
+
+  // console.log(result)
   if (variables.pageoffset) {
+    //EmployeeBoardAllSub = EmployeeBoardAllSub.sort((a, b) =>  a.displayName.localeCompare(b.displayName))
     const pagenumber: number =
       variables.pagenum === 1
         ? 0
@@ -97,8 +118,15 @@ function payloadFilter(
       variables.pagenum === 1
         ? variables.pageoffset
         : variables.pagenum * variables.pageoffset;
-    EmployeeBoardAllSub = EmployeeBoardAllSub.slice(pagenumber, pageoffset);
+    newPayload = newPayload.slice(pagenumber, pageoffset);
   }
-  return EmployeeBoardAllSub;
+  payload = {
+      EmployeeBoardAllSub: newPayload,
+      AreaRatio: {
+         currentWorkerCount,
+         totalWorkerCount,
+         currentPercent
+      },
+  }; 
+  return payload;
 }
- 

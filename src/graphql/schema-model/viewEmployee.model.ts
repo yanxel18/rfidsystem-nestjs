@@ -77,13 +77,24 @@ export class EmployeeBoard {
   @Field((type) => Int, { nullable: true })
   leaveType?: number;
 
+  @Field((type) => Int, { nullable: true })
+  empLoc?: number | null;
+
+  @Field((type) => Int, { nullable: true })
+  empArea?: number | null;
 }
+
+ 
 
 @ObjectType()
 export class EmployeeBoardAllSub {
   @Field((type) => [EmployeeBoard], { nullable: true })
-  EmployeeBoardAllSub: EmployeeBoard[];
+  EmployeeBoardAllSub: EmployeeBoard[]; 
+
+  @Field((type) => EmployeeCountRatio, { nullable: true })
+  AreaRatio: Partial<EmployeeCountRatio>; 
 }
+ 
 
 @ObjectType()
 export class EmployeeBoardCount {
@@ -91,3 +102,15 @@ export class EmployeeBoardCount {
   EmpCount?: number;
 }
  
+@ObjectType()
+export class EmployeeCountRatio {
+  @Field({ nullable: true })
+  currentPercent?: string;
+
+  @Field({ nullable: true })
+  currentWorkerCount?: number;
+
+  @Field({ nullable: true })
+  totalWorkerCount?: number;
+
+}

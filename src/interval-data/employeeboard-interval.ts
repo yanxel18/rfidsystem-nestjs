@@ -1,5 +1,5 @@
 import { EmployeeBoard } from 'src/graphql/schema-model/viewEmployee.model';
-import { IPayloadEmployeeBoard, IViewEmployeeBoard } from 'src/model/viewModel/viewTableModel';
+import { IPayloadEmployeeBoard, IPayloadEmployeeBoardWithRatio, IViewEmployeeBoard } from 'src/model/viewModel/viewTableModel';
 import { AppService } from 'src/app.service';
 import { Cache } from 'cache-manager';
 import { CACHE_MANAGER, Inject, Injectable } from '@nestjs/common';
@@ -13,13 +13,15 @@ export class EmployeeBoardViewLoop {
     private cache: Cache,
   ) {}
 
-  async EmployeeBoardAll(): Promise<void> {
-    let employeeAllView: IViewEmployeeBoard[];
+  async EmployeeBoardAll(): Promise<void> { 
     setInterval(async () => {
-      employeeAllView = await this.appService.employee_list();
-      const returndata : IPayloadEmployeeBoard = {
-        EmployeeBoardAllSub: employeeAllView
-      } 
+     // const employeeAllView: IViewEmployeeBoard[] = await this.appService.employee_list();
+      const returndata : IPayloadEmployeeBoardWithRatio = {  
+          EmployeeBoardAllSub: await this.appService.employee_list(),
+          AreaRatio: null
+    
+       
+      }    
       this.cache.set('employeeAllView', returndata, 5000); 
       // this.pubSub.publish('employeeAllViewx', { returndata});
     }, 1000);
