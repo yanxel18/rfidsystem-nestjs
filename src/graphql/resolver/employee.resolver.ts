@@ -33,19 +33,12 @@ export class EmpResolver {
     setInterval(async () => {
       const cacheData: IPayloadEmployeeBoardWithRatio = await this.cache.get(
         'employeeAllView',
-      );
-      // let returnCachedData: IPayloadEmployeeBoard[] = cacheData;
+      ); 
       this.pubSub.publish('employeeAllViewx', cacheData);
     }, 1000);
   }
 
-  @Query((returns) => Int, { nullable: true })
-  async EmpCount(): Promise<Number | null> {
-    const cacheData: IPayloadEmployeeBoard = await this.cache.get(
-      'employeeAllView',
-    );
-    return Object.keys(cacheData.EmployeeBoardAllSub).length;
-  }
+ 
 
   @Query((returns) => Int)
   async EmpBoardMaxCountFilter(
