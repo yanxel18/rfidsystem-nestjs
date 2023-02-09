@@ -18,3 +18,13 @@ export class EmployeeBoardArgs {
     @Field(type => Int, { nullable: true})
     pagenum?: number
 }
+
+
+@ArgsType()
+export class CommentArgs {
+    @Field(type => String)
+    empID: string
+
+    @Field(type => String, { nullable : true})
+    comment?: string
+}

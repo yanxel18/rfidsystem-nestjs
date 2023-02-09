@@ -2,24 +2,24 @@ import {
   Args,
   Context,
   Int,
+  Mutation,
   Query,
   Resolver,
   Subscription,
 } from '@nestjs/graphql';
-import {
-  EmployeeBoard,
+import { 
   EmployeeBoardAllSub,
+  EmployeeCommentResponse,
 } from '../schema-model/viewEmployee.model';
 import {
-  IEmployeeBoardArgs,
-  IPayloadEmployeeBoard,
+  IEmployeeBoardArgs, 
   IPayloadEmployeeBoardWithRatio,
-  IViewEmployeeBoard,
+  IReponseComment, 
 } from 'src/model/viewModel/viewTableModel';
 import { AppService } from 'src/app.service';
 import { Cache } from 'cache-manager';
 import { CACHE_MANAGER, Inject } from '@nestjs/common';
-import { EmployeeBoardArgs } from '../args/common-args';
+import { CommentArgs, EmployeeBoardArgs } from '../args/common-args';
 import { PubSub } from 'graphql-subscriptions';
 
 @Resolver(() => EmployeeBoardAllSub)
@@ -33,12 +33,11 @@ export class EmpResolver {
     setInterval(async () => {
       const cacheData: IPayloadEmployeeBoardWithRatio = await this.cache.get(
         'employeeAllView',
-      ); 
+      );
       this.pubSub.publish('employeeAllViewx', cacheData);
     }, 1000);
-  }
+  }   
 
- 
 
   @Query((returns) => Int)
   async EmpBoardMaxCountFilter(
@@ -48,21 +47,19 @@ export class EmpResolver {
       'employeeAllView',
     );
     return cacheData
-      ? payloadFilter(cacheData, args).EmployeeBoardAllSub
-          .length
+      ? payloadFilter(cacheData, args).EmployeeBoardAllSub.length
       : 0;
-  }
-  @Query((returns) => EmployeeBoardAllSub )
+  } 
+
+  @Query((returns) => EmployeeBoardAllSub)
   async EmployeeBoardAll(
     @Args() args: EmployeeBoardArgs,
   ): Promise<IPayloadEmployeeBoardWithRatio | []> {
     const cacheData: IPayloadEmployeeBoardWithRatio = await this.cache.get(
       'employeeAllView',
-    );
- 
+    ); 
     return [];
- 
-  }
+  } 
 
   @Subscription((returns) => EmployeeBoardAllSub, {
     resolve: (
@@ -77,8 +74,24 @@ export class EmpResolver {
     @Context('pubsub') pubSub: PubSub,
   ) {
     return this.pubSub.asyncIterator('employeeAllViewx');
+  }  
+
+  @Mutation((returns) => EmployeeCommentResponse)
+  async UpdateEmployeeComment(
+    @Args() args: CommentArgs,
+  ): Promise<IReponseComment> {
+    if (args.comment)
+    args = {
+      ...args,
+      comment: args.comment.trim(),
+    };
+    const exec = await this.appService.updateEmployeeComment(args);
+    return {
+      status: exec.toString(),
+    };
   }
 }
+
 function payloadFilter(
   payload: IPayloadEmployeeBoardWithRatio,
   variables: IEmployeeBoardArgs,
@@ -86,7 +99,7 @@ function payloadFilter(
   let newPayload = payload.EmployeeBoardAllSub;
   let currentWorkerCount = 0;
   let totalWorkerCount = 0;
-  let currentPercent: string = "0/0";
+  let currentPercent: string = '0/0';
   if (variables.areaID)
     newPayload = newPayload.filter((i) => i.empArea === variables.areaID);
   if (variables.locID)
@@ -94,13 +107,13 @@ function payloadFilter(
   if (variables.teamID)
     newPayload = newPayload.filter((i) => i.teamID === variables.teamID);
 
-  
-    currentWorkerCount = newPayload.filter(x => x.statusID === 1).length;
-    totalWorkerCount = newPayload.length;
-    currentPercent =  `${totalWorkerCount !== 0 ? (Math.round(currentWorkerCount / totalWorkerCount * 100)).toString() : 0}%`;
-
-
-  // console.log(result)
+  currentWorkerCount = newPayload.filter((x) => x.statusID === 1).length;
+  totalWorkerCount = newPayload.length;
+  currentPercent = `${
+    totalWorkerCount !== 0
+      ? Math.round((currentWorkerCount / totalWorkerCount) * 100).toString()
+      : 0
+  }%`;
   if (variables.pageoffset) {
     //EmployeeBoardAllSub = EmployeeBoardAllSub.sort((a, b) =>  a.displayName.localeCompare(b.displayName))
     const pagenumber: number =
@@ -114,12 +127,12 @@ function payloadFilter(
     newPayload = newPayload.slice(pagenumber, pageoffset);
   }
   payload = {
-      EmployeeBoardAllSub: newPayload,
-      AreaRatio: {
-         currentWorkerCount,
-         totalWorkerCount,
-         currentPercent
-      },
-  }; 
+    EmployeeBoardAllSub: newPayload,
+    AreaRatio: {
+      currentWorkerCount,
+      totalWorkerCount,
+      currentPercent,
+    },
+  };
   return payload;
 }

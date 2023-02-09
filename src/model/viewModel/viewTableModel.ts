@@ -75,3 +75,12 @@ export interface IViewDropList {
   ILocationList?: ILocationList[] | []
   ITeamList?: ITeamList[] | []
 }
+
+export interface IReponseComment {
+  status?: string
+}
+
+export interface IUpdateCommentArgs {
+  empID: string
+  comment?: string | null
+}

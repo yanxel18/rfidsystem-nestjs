@@ -83,7 +83,6 @@ export class EmployeeBoard {
   @Field((type) => Int, { nullable: true })
   empArea?: number | null;
 }
-
  
 
 @ObjectType()
@@ -113,4 +112,10 @@ export class EmployeeCountRatio {
   @Field({ nullable: true })
   totalWorkerCount?: number;
 
+}
+
+@ObjectType()
+export class EmployeeCommentResponse {
+  @Field({ nullable: true })
+  status?: string;
 }
