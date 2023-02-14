@@ -81,7 +81,7 @@ export class EmpResolver {
     @Args() args: CommentArgs,
   ): Promise<IReponseComment> {
     if (args.comment)
-    args = {
+    args = { 
       ...args,
       comment: args.comment.trim(),
     };

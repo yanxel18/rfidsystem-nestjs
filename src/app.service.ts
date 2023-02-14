@@ -51,7 +51,6 @@ export class AppService {
           comment: null
         }
       } 
-
       return await this.prisma.$executeRaw<any>`
       EXEC sp_update_comment
       @empID = ${param.empID},
