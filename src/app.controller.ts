@@ -7,7 +7,7 @@ import { EmployeeBoardViewLoop } from './interval-data/employeeboard-interval';
 export class AppController {
   constructor(private readonly appService: AppService,
     private empBoardViewLoop: EmployeeBoardViewLoop) {
-      empBoardViewLoop.EmployeeBoardAll();
+      empBoardViewLoop.EmployeeBoardAll(); 
   }
  
 

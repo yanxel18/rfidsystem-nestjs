@@ -11,7 +11,7 @@ import { upperDirectiveTransformer } from './graphql/common/directives/upper-cas
 import { IErrorMsg } from './model/viewModel/generalModel';
 import { EmployeeBoardViewLoop } from './interval-data/employeeboard-interval';
 import { ViewDropListResolver } from './graphql/resolver/viewDropList.resolver';
-
+import { ConfigModule } from '@nestjs/config';
 const errorCodeReplace = (err: IErrorMsg): string => {
   if (err.message.includes('database connection'))
     return 'Connection DB Error!';
@@ -22,6 +22,10 @@ const errorCodeReplace = (err: IErrorMsg): string => {
 
 @Module({
   imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath: `env\\${process.env.NODE_ENV}.env`
+    }),
     CacheModule.register({
       isGlobal: true,
       ttl: 5,
@@ -29,6 +33,7 @@ const errorCodeReplace = (err: IErrorMsg): string => {
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver, 
       playground: false,
+      introspection: process.env.NODE_ENV !== 'production',
       plugins: [ApolloServerPluginLandingPageLocalDefault()],
       autoSchemaFile: true,
       transformSchema: (schema) => upperDirectiveTransformer(schema, 'upper'),
@@ -36,6 +41,7 @@ const errorCodeReplace = (err: IErrorMsg): string => {
         'graphql-ws': true,
         'subscriptions-transport-ws': true,
       },
+      cache:'bounded',
       buildSchemaOptions: {
         directives: [
           new GraphQLDirective({
