@@ -2,9 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from './prisma.service';
 import { Prisma } from '@prisma/client';
 import {
-  IReponseComment,
   IUpdateCommentArgs,
-  IViewDropList,
   IViewDropListQuery,
   IViewEmployeeBoard,
 } from './model/viewModel/viewTableModel';
@@ -18,7 +16,7 @@ export class AppService {
     try {
       return await this.prisma.$queryRaw<
         IViewEmployeeBoard[]
-      >`select * from view_employee_board`;
+      >`select * from view_employee_board order by empArea`;
     } catch (err) {
       if (err instanceof Prisma.PrismaClientKnownRequestError) {
         if (err.code === PrismaErrorCode.P2010) {

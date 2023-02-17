@@ -9,6 +9,7 @@ import helmet from 'helmet';
 const cpus = os.cpus();
 
 async function bootstrap() {
+  console.log(cpus.length + " " + cluster.isPrimary);
   if (process.env.NODE_ENV !== 'production') initializeSystem();
   else {
     if (cluster.isPrimary) {

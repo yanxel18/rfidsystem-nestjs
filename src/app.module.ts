@@ -27,7 +27,7 @@ const errorCodeReplace = (err: IErrorMsg): string => {
       envFilePath: `env\\${process.env.NODE_ENV}.env`
     }),
     CacheModule.register({
-      isGlobal: true,
+      isGlobal: true, 
       ttl: 5,
     }),
     GraphQLModule.forRoot<ApolloDriverConfig>({

@@ -132,7 +132,7 @@ function payloadFilter(
       currentWorkerCount,
       totalWorkerCount,
       currentPercent,
-    },
+    }, 
   };
   return payload;
 }
