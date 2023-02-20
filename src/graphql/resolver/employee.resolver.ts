@@ -112,8 +112,7 @@ function payloadFilter(
   currentPercent = `${
     totalWorkerCount !== 0
       ? Math.round((currentWorkerCount / totalWorkerCount) * 100).toString()
-      : 0
-  }%`;
+      : 0 }%`;
   if (variables.pageoffset) {
     //EmployeeBoardAllSub = EmployeeBoardAllSub.sort((a, b) =>  a.displayName.localeCompare(b.displayName))
     const pagenumber: number =
