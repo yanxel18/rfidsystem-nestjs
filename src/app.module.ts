@@ -5,13 +5,14 @@ import { AppService } from './app.service';
 import { PrismaService } from './prisma.service';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
-import { ApolloServerPluginLandingPageLocalDefault } from 'apollo-server-core';
+import { ApolloServerPluginLandingPageDisabled } from 'apollo-server-core';
 import { DirectiveLocation, GraphQLDirective, GraphQLError } from 'graphql';
 import { upperDirectiveTransformer } from './graphql/common/directives/upper-case.directive';
 import { IErrorMsg } from './model/viewModel/generalModel';
 import { EmployeeBoardViewLoop } from './interval-data/employeeboard-interval';
 import { ViewDropListResolver } from './graphql/resolver/viewDropList.resolver';
 import { ConfigModule } from '@nestjs/config';
+import { DashBoardStatistics } from './graphql/resolver/viewTableResolver';
 const errorCodeReplace = (err: IErrorMsg): string => {
   if (err.message.includes('database connection'))
     return 'Connection DB Error!';
@@ -34,7 +35,7 @@ const errorCodeReplace = (err: IErrorMsg): string => {
       driver: ApolloDriver, 
       playground: false,
       introspection: process.env.NODE_ENV !== 'production',
-      plugins: [ApolloServerPluginLandingPageLocalDefault()],
+      plugins: [ApolloServerPluginLandingPageDisabled()],
       autoSchemaFile: true,
       transformSchema: (schema) => upperDirectiveTransformer(schema, 'upper'),
       subscriptions: {
@@ -62,6 +63,6 @@ const errorCodeReplace = (err: IErrorMsg): string => {
     }),
   ],
   controllers: [AppController],
-  providers: [AppService, PrismaService, EmpResolver,ViewDropListResolver, EmployeeBoardViewLoop],
+  providers: [AppService, PrismaService, EmpResolver,ViewDropListResolver, EmployeeBoardViewLoop,DashBoardStatistics],
 })
 export class AppModule {}

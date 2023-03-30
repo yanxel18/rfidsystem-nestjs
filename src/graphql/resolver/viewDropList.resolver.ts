@@ -6,6 +6,7 @@ import { OViewDropList } from '../schema-model/viewDropList.model';
 @Resolver(() => OViewDropList)
 export class ViewDropListResolver {
   constructor(private readonly appService: AppService) {}
+
   @Query((returns) => OViewDropList, { nullable: true })
   async ViewDropList(): Promise<IViewDropList | null> {
     const responseQuery: IViewDropList = JSON.parse(
@@ -13,4 +14,5 @@ export class ViewDropListResolver {
     )[0];
     return responseQuery;
   }
+  
 }

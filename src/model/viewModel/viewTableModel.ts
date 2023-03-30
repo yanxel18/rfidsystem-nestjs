@@ -84,3 +84,17 @@ export interface IUpdateCommentArgs {
   empID: string
   comment?: string | null
 }
+
+export interface ITotalAreaStatistics {
+  workerInTotal: number | null
+  workerAllTotal: number | null
+  workerInPercentage: number | null
+}
+
+export interface IPerAreaStatistics {
+  bldgName: string | null
+  actualProc: string | null
+  workerInTotal: number | null
+  workerTotal: number | null
+  workerInPercent: number | null
+}

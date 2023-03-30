@@ -38,7 +38,6 @@ export class EmpResolver {
     }, 1000);
   }   
 
-
   @Query((returns) => Int)
   async EmpBoardMaxCountFilter(
     @Args() args: EmployeeBoardArgs,
@@ -67,7 +66,7 @@ export class EmpResolver {
       variables: IEmployeeBoardArgs,
     ) => {
       return payloadFilter(payload, variables);
-    },
+    }, 
   })
   async EmployeeBoardAllSub(
     @Args() args: EmployeeBoardArgs,
@@ -97,8 +96,8 @@ function payloadFilter(
   variables: IEmployeeBoardArgs,
 ): IPayloadEmployeeBoardWithRatio {
   let newPayload = payload.EmployeeBoardAllSub;
-  let currentWorkerCount = 0;
-  let totalWorkerCount = 0;
+  let currentWorkerCount: number = 0;
+  let totalWorkerCount: number = 0;
   let currentPercent: string = '0/0';
   if (variables.areaID)
     newPayload = newPayload.filter((i) => i.empArea === variables.areaID);
@@ -131,7 +130,7 @@ function payloadFilter(
       currentWorkerCount,
       totalWorkerCount,
       currentPercent,
-    }, 
+    },
   };
   return payload;
 }

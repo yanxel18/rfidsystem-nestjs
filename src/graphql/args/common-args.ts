@@ -28,3 +28,15 @@ export class CommentArgs {
     @Field(type => String, { nullable : true})
     comment?: string
 }
+
+@ArgsType()
+export class AreaStatisticArgs {
+    @Field(type=> String)
+    AreaSelectedDate: string
+}
+
+@ArgsType()
+export class TotalStatisticArgs {
+    @Field(type=> String)
+    TotalStatSelectedDate: string
+}
