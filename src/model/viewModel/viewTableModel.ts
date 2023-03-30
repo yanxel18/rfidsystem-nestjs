@@ -34,6 +34,7 @@ export interface IViewEmployeeBoard {
 export interface IPayloadEmployeeBoard {
   EmployeeBoardAllSub: IViewEmployeeBoard[]  | []
 }
+
 export interface IPayloadEmployeeBoardWithRatio { 
     EmployeeBoardAllSub: IViewEmployeeBoard[] 
     AreaRatio: IEmployeeCountRatio | null
