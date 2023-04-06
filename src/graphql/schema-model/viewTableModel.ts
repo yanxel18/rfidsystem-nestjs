@@ -31,3 +31,12 @@ export class OPerAreaStatistics {
     workerInPercent: number | null;
 
 }
+
+@ObjectType()
+export class OPerAreaGraph {
+    @Field({ nullable: true})
+    DateSelect: string | null;
+
+    @Field((type)=> Float, { nullable: true})
+    WorkerRate: number | null;
+}

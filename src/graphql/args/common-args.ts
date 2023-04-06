@@ -32,11 +32,23 @@ export class CommentArgs {
 @ArgsType()
 export class AreaStatisticArgs {
     @Field(type=> String)
-    AreaSelectedDate: string
+    areaSelectedDate: string
 }
 
 @ArgsType()
 export class TotalStatisticArgs {
     @Field(type=> String)
-    TotalStatSelectedDate: string
+    totalStatSelectedDate: string
+}
+
+@ArgsType()
+export class AreaGraphArgs {
+    @Field(type=> Int, { nullable : true})
+    areaID: number
+
+    @Field(type=> Int,  { nullable : true})
+    locationID: number
+
+    @Field(type=> Int,  { nullable : true})
+    teamID: number
 }

@@ -37,7 +37,11 @@ export class EmpResolver {
       this.pubSub.publish('employeeAllViewx', cacheData);
     }, 1000);
   }   
-
+/**
+ * 
+ * @param args 
+ * @returns 
+ */
   @Query((returns) => Int)
   async EmpBoardMaxCountFilter(
     @Args() args: EmployeeBoardArgs,
@@ -49,7 +53,11 @@ export class EmpResolver {
       ? payloadFilter(cacheData, args).EmployeeBoardAllSub.length
       : 0;
   } 
-
+/**
+ * 
+ * @param args 
+ * @returns 
+ */
   @Query((returns) => EmployeeBoardAllSub)
   async EmployeeBoardAll(
     @Args() args: EmployeeBoardArgs,
@@ -59,7 +67,12 @@ export class EmpResolver {
     ); 
     return [];
   } 
-
+/**
+ * 
+ * @param args 
+ * @param pubSub 
+ * @returns 
+ */
   @Subscription((returns) => EmployeeBoardAllSub, {
     resolve: (
       payload: IPayloadEmployeeBoardWithRatio,
@@ -74,7 +87,11 @@ export class EmpResolver {
   ) {
     return this.pubSub.asyncIterator('employeeAllViewx');
   }  
-
+/**
+ * 
+ * @param args 
+ * @returns 
+ */
   @Mutation((returns) => EmployeeCommentResponse)
   async UpdateEmployeeComment(
     @Args() args: CommentArgs,
@@ -90,7 +107,12 @@ export class EmpResolver {
     };
   }
 }
-
+/**
+ * 
+ * @param payload 
+ * @param variables 
+ * @returns 
+ */
 function payloadFilter(
   payload: IPayloadEmployeeBoardWithRatio,
   variables: IEmployeeBoardArgs,

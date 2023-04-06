@@ -8,11 +8,10 @@ export class ViewDropListResolver {
   constructor(private readonly appService: AppService) {}
 
   @Query((returns) => OViewDropList, { nullable: true })
-  async ViewDropList(): Promise<IViewDropList | null> {
-    const responseQuery: IViewDropList = JSON.parse(
+  async ViewDropList(): Promise<IViewDropList | null> { 
+    return JSON.parse(
       (await this.appService.getViewDropList())[0].ViewDropList,
     )[0];
-    return responseQuery;
   }
   
 }

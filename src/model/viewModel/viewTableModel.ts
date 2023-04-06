@@ -99,3 +99,8 @@ export interface IPerAreaStatistics {
   workerTotal: number | null
   workerInPercent: number | null
 }
+
+export interface IPerAreaGraph {
+    DateSelect: string | null
+    WorkerRate: number | null
+}
