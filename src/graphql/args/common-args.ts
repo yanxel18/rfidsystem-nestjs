@@ -19,7 +19,6 @@ export class EmployeeBoardArgs {
     pagenum?: number
 }
 
-
 @ArgsType()
 export class CommentArgs {
     @Field(type => String)
@@ -51,4 +50,10 @@ export class AreaGraphArgs {
 
     @Field(type=> Int,  { nullable : true})
     teamID: number
+}
+
+@ArgsType()
+export class DateSelectArgs{
+    @Field(type => String, { nullable: true})
+    dateFrom?: string
 }

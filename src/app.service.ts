@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from './prisma.service';
 import { Prisma } from '@prisma/client';
 import {
+  IDateSelect,
   IPerAreaGraph,
   IPerAreaStatistics,
   ITotalAreaStatistics,
@@ -124,6 +125,18 @@ export class AppService {
 		  @pm_areaID = ${areaID},
       @pm_locationID = ${locID},
       @pm_teamID = ${teamID}`;
+    } catch (err) {
+      if (err instanceof Prisma.PrismaClientKnownRequestError) {
+        throw err;
+      }
+    }
+  }
+
+  async getDateSelectList(dateFrom: string | null): Promise<IDateSelect[]> {
+    try {
+      return await this.prisma.$queryRaw<IPerAreaGraph[]>`
+      EXEC [dbo].[sp_show_dateselectlist]
+		  @param_datefrom = ${dateFrom}`;
     } catch (err) {
       if (err instanceof Prisma.PrismaClientKnownRequestError) {
         throw err;

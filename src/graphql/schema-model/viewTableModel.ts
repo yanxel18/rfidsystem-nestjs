@@ -29,7 +29,6 @@ export class OPerAreaStatistics {
 
     @Field((type) => Float , { nullable: true})
     workerInPercent: number | null;
-
 }
 
 @ObjectType()

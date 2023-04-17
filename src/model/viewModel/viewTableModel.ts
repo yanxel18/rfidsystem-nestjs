@@ -104,3 +104,7 @@ export interface IPerAreaGraph {
     DateSelect: string | null
     WorkerRate: number | null
 }
+
+export interface IDateSelect {
+  DateSelect: string
+}

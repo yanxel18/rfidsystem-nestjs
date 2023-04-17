@@ -1,8 +1,10 @@
 import { Args, Query, Resolver } from '@nestjs/graphql';
-import { IPerAreaGraph, IPerAreaStatistics, ITotalAreaStatistics } from 'src/model/viewModel/viewTableModel';
+import { IDateSelect, IPerAreaGraph, IPerAreaStatistics, ITotalAreaStatistics } from 'src/model/viewModel/viewTableModel';
 import { AppService } from 'src/app.service';
 import { OPerAreaGraph, OPerAreaStatistics, OTotalStatistics } from '../schema-model/viewTableModel';
-import { AreaGraphArgs, AreaStatisticArgs, TotalStatisticArgs } from '../args/common-args';
+import { AreaGraphArgs, AreaStatisticArgs, DateSelectArgs, TotalStatisticArgs } from '../args/common-args';
+import { ODateSelect } from '../schema-model/viewDropList.model';
+import moment from 'moment';
 
 @Resolver(() => OPerAreaStatistics)
 export class DashBoardStatistics {
@@ -36,5 +38,10 @@ export class DashBoardStatistics {
     return  await this.appService.getPerAreaGraph(args.areaID, args.locationID,args.teamID);
   }
 
+  @Query((returns) => [ODateSelect]) 
+  async DateSelectList(@Args() args: DateSelectArgs): Promise<IDateSelect[]> { 
+ 
+    return  await this.appService.getDateSelectList(args.dateFrom);
+  }
 }
  

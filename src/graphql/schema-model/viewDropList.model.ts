@@ -43,3 +43,10 @@ export class OViewDropList {
     @Field((type) => [OTeamList], { nullable: true})
     ITeamList: OTeamList[] | []
 }
+
+@ObjectType()
+export class ODateSelect {
+
+    @Field({ nullable: true})
+    DateSelect: string 
+}
