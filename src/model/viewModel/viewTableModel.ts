@@ -1,6 +1,3 @@
-/**
- * Model viewEmployeeBoard
- */
 export interface IViewEmployeeBoard {
   empID: string
   tagID: string

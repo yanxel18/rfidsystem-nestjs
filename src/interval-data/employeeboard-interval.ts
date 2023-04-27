@@ -11,6 +11,10 @@ export class EmployeeBoardViewLoop {
     @Inject(CACHE_MANAGER) private cache: Cache,
   ) {} 
   async EmployeeBoardAll(): Promise<void> { 
+    /**
+     * this interval queries in the database every 1second to the view_employee_board
+     * and store it in the cache memory with retention period of 5 seconds.
+     */
     setInterval(async () => { 
       const returndata : IPayloadEmployeeBoardWithRatio = {  
           EmployeeBoardAllSub: await this.appService.employee_list(),

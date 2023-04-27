@@ -30,6 +30,11 @@ export class EmpResolver {
     @Inject(CACHE_MANAGER)
     private cache: Cache,
   ) {
+    /**
+     * this interval per 1 second queries on the cache memory to be broadcast on 'employeeAllViewx' 
+     * topic to be received by subscribing clients.
+     * If the client subscribes to EmployeeBoardAllSub subscription, this is the data that will be published.
+     */
     setInterval(async () => {
       const cacheData: IPayloadEmployeeBoardWithRatio = await this.cache.get(
         'employeeAllView',
@@ -40,9 +45,10 @@ export class EmpResolver {
 /**
  * 
  * @param args 
- * @returns 
+ * @returns The total number of employee count to be displayed on the Board.
+ * This also used on the paginator total number of workers.
  */
-  @Query((returns) => Int)
+  @Query((_returns) => Int)
   async EmpBoardMaxCountFilter(
     @Args() args: EmployeeBoardArgs,
   ): Promise<Number | null> {
@@ -55,12 +61,13 @@ export class EmpResolver {
   } 
 /**
  * 
- * @param args 
- * @returns 
+ * @param _args 
+ * @returns the all employee list but returns zero length array. 
+ * The blank query return is necessary for the subscription template.
  */
-  @Query((returns) => EmployeeBoardAllSub)
+  @Query((_returns) => EmployeeBoardAllSub)
   async EmployeeBoardAll(
-    @Args() args: EmployeeBoardArgs,
+    @Args() _args: EmployeeBoardArgs,
   ): Promise<IPayloadEmployeeBoardWithRatio | []> {
     const cacheData: IPayloadEmployeeBoardWithRatio = await this.cache.get(
       'employeeAllView',
@@ -69,11 +76,14 @@ export class EmpResolver {
   } 
 /**
  * 
- * @param args 
- * @param pubSub 
- * @returns 
+ * @param _args 
+ * areaID, teamID, locID, pageoffset,pagenum
+ * @param _pubSub 
+ * @returns employee list on subscription method. This is a live streaming of data
+ * and subscribed by the client. The resolve is used for modification of payloads upon
+ * filter. The resolve changes the subscription payload data for each client depends on the received argument.
  */
-  @Subscription((returns) => EmployeeBoardAllSub, {
+  @Subscription((_returns) => EmployeeBoardAllSub, {
     resolve: (
       payload: IPayloadEmployeeBoardWithRatio,
       variables: IEmployeeBoardArgs,
@@ -82,17 +92,18 @@ export class EmpResolver {
     }, 
   })
   async EmployeeBoardAllSub(
-    @Args() args: EmployeeBoardArgs,
-    @Context('pubsub') pubSub: PubSub,
+    @Args() _args: EmployeeBoardArgs,
+    @Context('pubsub') _pubSub: PubSub,
   ) {
     return this.pubSub.asyncIterator('employeeAllViewx');
   }  
 /**
  * 
  * @param args 
- * @returns 
+ * @returns nothing
+ * This mutation inserts or update a comment section on the board per worker id.
  */
-  @Mutation((returns) => EmployeeCommentResponse)
+  @Mutation((_returns) => EmployeeCommentResponse)
   async UpdateEmployeeComment(
     @Args() args: CommentArgs,
   ): Promise<IReponseComment> {
@@ -111,7 +122,8 @@ export class EmpResolver {
  * 
  * @param payload 
  * @param variables 
- * @returns 
+ * @returns  the new subscription payload used fro subscription directive @Subscription for 
+ * EmployeeBoardAllSub.
  */
 function payloadFilter(
   payload: IPayloadEmployeeBoardWithRatio,
