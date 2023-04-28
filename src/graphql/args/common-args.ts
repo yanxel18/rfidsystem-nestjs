@@ -14,6 +14,7 @@ export class EmployeeBoardArgs {
 
     @Field(type => Int, { nullable: true})
     posID?: number
+    
     @Field(type => Int, { nullable: true})
     pageoffset?: number
 

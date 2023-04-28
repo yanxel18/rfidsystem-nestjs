@@ -77,7 +77,7 @@ export class EmpResolver {
 /**
  * 
  * @param _args 
- * areaID, teamID, locID, pageoffset,pagenum
+ * areaID, teamID, locID, posID, pageoffset,pagenum
  * @param _pubSub 
  * @returns employee list on subscription method. This is a live streaming of data
  * and subscribed by the client. The resolve is used for modification of payloads upon
@@ -139,6 +139,8 @@ function payloadFilter(
     newPayload = newPayload.filter((i) => i.empLoc === variables.locID);
   if (variables.teamID)
     newPayload = newPayload.filter((i) => i.teamID === variables.teamID);
+  if (variables.posID)
+    newPayload = newPayload.filter((i) => i.posID === variables.posID);
 
   currentWorkerCount = newPayload.filter((x) => x.statusID === 1).length;
   totalWorkerCount = newPayload.length;

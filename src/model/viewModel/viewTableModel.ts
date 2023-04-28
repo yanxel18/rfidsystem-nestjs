@@ -26,6 +26,8 @@ export interface IViewEmployeeBoard {
   leaveType: number | null
   empLoc: number | null
   empArea: number | null
+  divID: number | null
+  posID: number | null
 }
  
 export interface IPayloadEmployeeBoard {
@@ -46,6 +48,7 @@ export interface IEmployeeBoardArgs {
   areaID?: number | null
   teamID?: number | null
   locID?: number | null
+  posID?: number | null
   pageoffset?: number | null
   pagenum?: number | null 
 }
