@@ -9,7 +9,7 @@ export class ViewDropListResolver {
 /**
  * 
  * @returns list dropdownlist data for viewboard client.
- * IArealist, ILocationList and ITeamList.
+ * IArealist, ILocationList, ITeamList and IPositionList.
  */
   @Query((returns) => OViewDropList, { nullable: true })
   async ViewDropList(): Promise<IViewDropList | null> { 

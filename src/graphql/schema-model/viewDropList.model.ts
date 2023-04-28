@@ -31,17 +31,29 @@ export class OTeamList {
 
 }
 
+@ObjectType()
+export class OPosList {
+    @Field((type)=> Int)
+    posID: number;
+
+    @Field({ nullable: true })
+    posName: string;
+}
+
 
 @ObjectType()
 export class OViewDropList {
-    @Field((type) => [OAreaList], { nullable: true})
+    @Field((type) => [OAreaList], { nullable: true, defaultValue: []})
     IAreaList: OAreaList[]| []
 
-    @Field((type) => [OLocationList], { nullable: true})
+    @Field((type) => [OLocationList], { nullable: true, defaultValue: []})
     ILocationList: OLocationList[]| []
 
-    @Field((type) => [OTeamList], { nullable: true})
+    @Field((type) => [OTeamList], { nullable: true, defaultValue: []})
     ITeamList: OTeamList[] | []
+
+    @Field((type) => [OPosList], { nullable: true, defaultValue: []})
+    IPositionList: OPosList[]| []
 }
 
 @ObjectType()

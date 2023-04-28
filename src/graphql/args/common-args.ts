@@ -13,6 +13,8 @@ export class EmployeeBoardArgs {
     locID?: number
 
     @Field(type => Int, { nullable: true})
+    posID?: number
+    @Field(type => Int, { nullable: true})
     pageoffset?: number
 
     @Field(type => Int, { nullable: true})

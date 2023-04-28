@@ -65,6 +65,11 @@ export interface ITeamList {
   teamName: string
 }
 
+export interface IPositionList {
+  posID: number
+  posName: string
+}
+
 export interface IViewDropListQuery {
   ViewDropList: string
 }
@@ -72,16 +77,14 @@ export interface IViewDropList {
   IAreaList?: IAreaList[] | []
   ILocationList?: ILocationList[] | []
   ITeamList?: ITeamList[] | []
+  IPositionList?: IPositionList[] | [] 
 }
 
 export interface IReponseComment {
   status?: string
 }
 
-export interface IUpdateCommentArgs {
-  empID: string
-  comment?: string | null
-}
+ 
 
 export interface ITotalAreaStatistics {
   workerInTotal: number | null

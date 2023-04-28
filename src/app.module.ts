@@ -25,14 +25,14 @@ const errorCodeReplace = (err: IErrorMsg): string => {
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: `env\\${process.env.NODE_ENV}.env`
+      envFilePath: `env\\${process.env.NODE_ENV}.env`,
     }),
     CacheModule.register({
-      isGlobal: true, 
+      isGlobal: true,
       ttl: 5,
     }),
     GraphQLModule.forRoot<ApolloDriverConfig>({
-      driver: ApolloDriver, 
+      driver: ApolloDriver,
       playground: false,
       introspection: process.env.NODE_ENV !== 'production',
       plugins: [ApolloServerPluginLandingPageDisabled()],
@@ -42,7 +42,7 @@ const errorCodeReplace = (err: IErrorMsg): string => {
         'graphql-ws': true,
         'subscriptions-transport-ws': true,
       },
-      cache:'bounded',
+      cache: 'bounded',
       buildSchemaOptions: {
         directives: [
           new GraphQLDirective({
@@ -63,6 +63,13 @@ const errorCodeReplace = (err: IErrorMsg): string => {
     }),
   ],
   controllers: [AppController],
-  providers: [AppService, PrismaService, EmpResolver,ViewDropListResolver, EmployeeBoardViewLoop,DashBoardStatistics],
+  providers: [
+    AppService,
+    PrismaService,
+    EmpResolver,
+    ViewDropListResolver,
+    EmployeeBoardViewLoop,
+    DashBoardStatistics,
+  ],
 })
 export class AppModule {}
