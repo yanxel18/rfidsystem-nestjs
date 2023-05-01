@@ -45,6 +45,7 @@ export interface IEmployeeCountRatio {
   totalWorkerCount?: number | null
 }
 export interface IEmployeeBoardArgs {
+  search?: string | null
   areaID?: number | null
   teamID?: number | null
   locID?: number | null

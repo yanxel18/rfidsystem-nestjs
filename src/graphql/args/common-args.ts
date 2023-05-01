@@ -2,7 +2,9 @@ import { ArgsType, Field, Int } from "@nestjs/graphql";
 
 @ArgsType()
 export class EmployeeBoardArgs {
-
+    @Field({ nullable: true})
+    search?: string
+    
     @Field(type => Int, { nullable: true})
     areaID?: number
 
@@ -14,7 +16,7 @@ export class EmployeeBoardArgs {
 
     @Field(type => Int, { nullable: true})
     posID?: number
-    
+
     @Field(type => Int, { nullable: true})
     pageoffset?: number
 

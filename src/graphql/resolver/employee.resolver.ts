@@ -133,15 +133,18 @@ function payloadFilter(
   let currentWorkerCount: number = 0;
   let totalWorkerCount: number = 0;
   let currentPercent: string = '0/0';
-  if (variables.areaID)
-    newPayload = newPayload.filter((i) => i.empArea === variables.areaID);
-  if (variables.locID)
-    newPayload = newPayload.filter((i) => i.empLoc === variables.locID);
-  if (variables.teamID)
-    newPayload = newPayload.filter((i) => i.teamID === variables.teamID);
-  if (variables.posID)
-    newPayload = newPayload.filter((i) => i.posID === variables.posID);
-
+  if (variables.search)
+    newPayload = newPayload.filter((i) => i.displayName.includes((variables.search).trim()))
+  else { 
+    if (variables.areaID)
+      newPayload = newPayload.filter((i) => i.empArea === variables.areaID);
+    if (variables.locID)
+      newPayload = newPayload.filter((i) => i.empLoc === variables.locID);
+    if (variables.teamID)
+      newPayload = newPayload.filter((i) => i.teamID === variables.teamID);
+    if (variables.posID)
+      newPayload = newPayload.filter((i) => i.posID === variables.posID);
+  }
   currentWorkerCount = newPayload.filter((x) => x.statusID === 1).length;
   totalWorkerCount = newPayload.length;
   currentPercent = `${

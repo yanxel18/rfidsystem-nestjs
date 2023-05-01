@@ -1,11 +1,13 @@
-import { Controller } from '@nestjs/common';
-import { AppService } from './app.service';
+import { Controller } from '@nestjs/common'; 
 import { EmployeeBoardViewLoop } from './interval-data/employeeboard-interval';
  
  
 @Controller()
 export class AppController {
-  constructor(private readonly appService: AppService,
+  constructor(
+    /**
+     * initiate employeeboard every second query to view_employee_board
+     */
     private empBoardViewLoop: EmployeeBoardViewLoop) {
       empBoardViewLoop.EmployeeBoardAll(); 
   }
