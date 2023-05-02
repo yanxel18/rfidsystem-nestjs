@@ -50,6 +50,7 @@ export interface IEmployeeBoardArgs {
   teamID?: number | null
   locID?: number | null
   posID?: number | null
+  order?: number | null
   pageoffset?: number | null
   pagenum?: number | null 
 }
