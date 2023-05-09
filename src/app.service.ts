@@ -128,7 +128,7 @@ export class AppService {
       return await this.prisma.$queryRaw<IPerAreaGraph[]>`
       EXEC [dbo].[sp_show_perarea_graph]
 		  @pm_areaID = ${args.areaID},
-      @pm_locationID = ${args.locationID},
+      @pm_locationID = ${args.locID},
       @pm_teamID = ${args.teamID}`;
     } catch (err) {
       if (err instanceof Prisma.PrismaClientKnownRequestError) {

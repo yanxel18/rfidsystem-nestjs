@@ -53,7 +53,7 @@ export class AreaGraphArgs {
     areaID: number
 
     @Field(type=> Int,  { nullable : true})
-    locationID: number
+    locID: number
 
     @Field(type=> Int,  { nullable : true})
     teamID: number

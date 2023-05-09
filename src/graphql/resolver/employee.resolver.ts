@@ -143,7 +143,6 @@ function payloadFilter(
       : 0
   }%`;
   if (args.pageoffset) {
-    //EmployeeBoardAllSub = EmployeeBoardAllSub.sort((a, b) =>  a.displayName.localeCompare(b.displayName))
     const pagenumber: number =
       args.pagenum === 1 ? 0 : args.pagenum * args.pageoffset - args.pageoffset;
     const pageoffset: number =
