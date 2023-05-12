@@ -1,4 +1,4 @@
-import { ArgsType, Directive, Field, Int } from "@nestjs/graphql";
+import { ArgsType, Field, Int } from "@nestjs/graphql";
 
 @ArgsType()
 export class EmployeeBoardArgs {
@@ -33,8 +33,7 @@ export class EmployeeBoardArgs {
 export class CommentArgs {
     @Field(type => String)
     empID: string
-    
-    @Directive('@trimString')
+ 
     @Field(type => String, { nullable : true})
     comment?: string
 }
