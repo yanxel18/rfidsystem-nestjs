@@ -63,12 +63,25 @@ export class AppService {
    * @returns the result of an employee update or throw error.
    */
   async updateEmployeeComment(@Args() param: CommentArgs): Promise<number> {
+    const notAllowed: string[] = ['-', 'ー'];
+    const stringReg: RegExp = /^[a-zA-Z0-9]+$/i;
     try {
-      if (param.comment === '-' || param.comment === 'ー') {
-        param = {
-          ...param,
-          comment: null,
-        };
+      if (typeof param.comment === 'string') {
+        if (
+          notAllowed.some((str) => param.comment.includes(str)) &&
+          param.comment.length > 1 &&
+          !stringReg.test(param.comment)
+        ) {
+          param = {
+            ...param,
+            comment: null,
+          };
+        } else {
+          param = {
+            ...param,
+            comment: param.comment.trim(),
+          };
+        }
       }
       return await this.prisma.$executeRaw<any>`
       EXEC sp_update_comment
@@ -118,6 +131,7 @@ export class AppService {
       }
     }
   }
+
   /**
    *
    * @param areaID

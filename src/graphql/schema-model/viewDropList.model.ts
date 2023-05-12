@@ -40,6 +40,15 @@ export class OPosList {
     posName: string;
 }
 
+@ObjectType()
+export class ODivList{
+    @Field((type) => Int)
+    divID: number;
+
+    @Field({ nullable: true })
+    divName: string;
+}
+
 
 @ObjectType()
 export class OViewDropList {
@@ -54,6 +63,9 @@ export class OViewDropList {
 
     @Field((type) => [OPosList], { nullable: true, defaultValue: []})
     IPositionList: OPosList[]| []
+
+    @Field((type) => [ODivList], { nullable: true, defaultValue: []})
+    IDivisionList: ODivList[]| []
 }
 
 @ObjectType()

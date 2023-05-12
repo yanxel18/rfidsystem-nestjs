@@ -107,12 +107,7 @@ export class EmpResolver {
   @Mutation((_returns) => EmployeeCommentResponse)
   async UpdateEmployeeComment(
     @Args() args: CommentArgs,
-  ): Promise<IReponseComment> {
-    if (args.comment)
-      args = {
-        ...args,
-        comment: args.comment.trim(),
-      };
+  ): Promise<IReponseComment> { 
     const exec = await this.appService.updateEmployeeComment(args);
     return {
       status: exec.toString(),
@@ -142,7 +137,7 @@ function payloadFilter(
       ? Math.round((currentWorkerCount / totalWorkerCount) * 100).toString()
       : 0
   }%`;
-  if (args.pageoffset) {
+  if (typeof args.pageoffset === "number") {
     const pagenumber: number =
       args.pagenum === 1 ? 0 : args.pagenum * args.pageoffset - args.pageoffset;
     const pageoffset: number =
@@ -164,38 +159,45 @@ function clientFilter(
   payload: IViewEmployeeBoard[],
   args: IEmployeeBoardArgs,
 ): IViewEmployeeBoard[] {
-  let newPayload = payload;
-
-  if (args.search)
+  let newPayload = payload; 
+  if (typeof args.search === "string")
     newPayload = newPayload.filter((i) =>
       i.displayName.includes(args.search.trim()),
     );
   else {
-    
-    if (args.areaID)
+    if (typeof args.areaID === "number")
       newPayload = newPayload.filter((i) => i.empArea === args.areaID);
-    if (args.locID)
+    if (typeof args.locID === "number")
       newPayload = newPayload.filter((i) => i.empLoc === args.locID);
-    if (args.teamID)
+    if (typeof args.teamID === "number")
       newPayload = newPayload.filter((i) => i.teamID === args.teamID);
-    if (args.posID)
-      newPayload = newPayload.filter((i) => i.posID === args.posID);  
-    if (args.order) { 
-      newPayload =
-        args.order === 1
-          ? newPayload.sort((a, b) => {
-              return (
-                a.statusID - b.statusID ||
-                a.displayName.localeCompare(b.displayName)
-              );
-            })
-          : newPayload.sort((a, b) => {
-              return (
-                b.statusID - a.statusID ||
-                a.displayName.localeCompare(b.displayName)
-              );
-            })
+    if (typeof args.posID === "number")
+      newPayload = newPayload.filter((i) => i.posID === args.posID);
+    if (typeof args.divID === "number")
+      newPayload = newPayload.filter((i) => i.divID === args.divID);
+    if (typeof args.order === "number") {
+      switch (args.order){  
+        case 1: {
+          newPayload =  newPayload.sort((a, b) => {
+            return (
+              a.statusID - b.statusID ||
+              a.displayName.localeCompare(b.displayName)
+            );
+          });
+          break;
+        }
+        case 2: {
+          newPayload =  newPayload.sort((a, b) => {
+            return (
+              b.statusID - a.statusID ||
+              a.displayName.localeCompare(b.displayName)
+            );
+          });
+          break;
+        }
+    
+      } 
     }
-  } 
+  }
   return newPayload;
 }

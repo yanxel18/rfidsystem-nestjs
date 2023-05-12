@@ -7,7 +7,7 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { ApolloServerPluginLandingPageDisabled } from 'apollo-server-core';
 import { DirectiveLocation, GraphQLDirective, GraphQLError } from 'graphql';
-import { upperDirectiveTransformer } from './graphql/common/directives/upper-case.directive';
+import { stringTrimDirective } from './graphql/common/directives/stringTrim.directive';
 import { IErrorMsg } from './model/viewModel/generalModel';
 import { EmployeeBoardViewLoop } from './interval-data/employeeboard-interval';
 import { ViewDropListResolver } from './graphql/resolver/viewDropList.resolver';
@@ -37,7 +37,7 @@ const errorCodeReplace = (err: IErrorMsg): string => {
       introspection: process.env.NODE_ENV !== 'production',
       plugins: [ApolloServerPluginLandingPageDisabled()],
       autoSchemaFile: true,
-      transformSchema: (schema) => upperDirectiveTransformer(schema, 'upper'),
+      transformSchema: (schema) => stringTrimDirective(schema, 'trimString'),
       subscriptions: {
         'graphql-ws': true,
         'subscriptions-transport-ws': true,

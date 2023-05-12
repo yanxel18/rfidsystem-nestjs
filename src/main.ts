@@ -4,8 +4,7 @@ import { AppModule } from './app.module';
 import { PrismaService } from './prisma.service';
 import cluster from 'cluster';
 import * as os from 'os';
-import helmet from 'helmet';
-
+import helmet from 'helmet'; 
 const cpus = os.cpus();
 
 async function bootstrap() {
@@ -35,7 +34,7 @@ async function initializeSystem() {
   appConfig.disable('x-powered-by');
   appConfig.set('etag', false);
   appConfig.set('json spaces', 2);
-  const prismaService = app.get(PrismaService);
+  const prismaService = app.get(PrismaService); 
   app.use(helmet());
   await prismaService.enableShutdownHooks(app);
   await app.listen(process.env.PORT);

@@ -50,6 +50,7 @@ export interface IEmployeeBoardArgs {
   teamID?: number | null
   locID?: number | null
   posID?: number | null
+  divID?: number | null
   order?: number | null
   pageoffset?: number | null
   pagenum?: number | null 
@@ -75,6 +76,10 @@ export interface IPositionList {
   posName: string
 }
 
+export interface IDivisionList {
+  divID: number
+  divName: string 
+}
 export interface IViewDropListQuery {
   ViewDropList: string
 }
@@ -83,6 +88,7 @@ export interface IViewDropList {
   ILocationList?: ILocationList[] | []
   ITeamList?: ITeamList[] | []
   IPositionList?: IPositionList[] | [] 
+  IDivisionList?: IDivisionList[] | []
 }
 
 export interface IReponseComment {
