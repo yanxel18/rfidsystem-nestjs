@@ -107,7 +107,7 @@ export class EmpResolver {
   @Mutation((_returns) => EmployeeCommentResponse)
   async UpdateEmployeeComment(
     @Args() args: CommentArgs,
-  ): Promise<IReponseComment> { 
+  ): Promise<IReponseComment> {
     const exec = await this.appService.updateEmployeeComment(args);
     return {
       status: exec.toString(),
@@ -125,19 +125,21 @@ function payloadFilter(
   payload: IPayloadEmployeeBoardWithRatio,
   args: IEmployeeBoardArgs,
 ): IPayloadEmployeeBoardWithRatio {
+  const excludeList: number[] = [3, 4];
   let newPayload = payload.EmployeeBoardAllSub;
   let currentWorkerCount: number = 0;
   let totalWorkerCount: number = 0;
   let currentPercent: string = '0/0';
   newPayload = clientFilter(newPayload, args);
-  currentWorkerCount = newPayload.filter((x) => x.statusID === 1).length;
-  totalWorkerCount = newPayload.length;
+  currentWorkerCount = newPayload.filter(
+    (x) => x.statusID === 1 && !excludeList.some((ex) => x.statusID === ex)).length;
+  totalWorkerCount = newPayload.filter((x) => !excludeList.some((ex) => x.statusID === ex)).length;
   currentPercent = `${
     totalWorkerCount !== 0
       ? Math.round((currentWorkerCount / totalWorkerCount) * 100).toString()
       : 0
   }%`;
-  if (typeof args.pageoffset === "number") {
+  if (typeof args.pageoffset === 'number') {
     const pagenumber: number =
       args.pagenum === 1 ? 0 : args.pagenum * args.pageoffset - args.pageoffset;
     const pageoffset: number =
@@ -159,26 +161,26 @@ function clientFilter(
   payload: IViewEmployeeBoard[],
   args: IEmployeeBoardArgs,
 ): IViewEmployeeBoard[] {
-  let newPayload = payload; 
-  if (typeof args.search === "string")
+  let newPayload = payload;
+  if (typeof args.search === 'string')
     newPayload = newPayload.filter((i) =>
       i.displayName.includes(args.search.trim()),
     );
   else {
-    if (typeof args.areaID === "number")
+    if (typeof args.areaID === 'number')
       newPayload = newPayload.filter((i) => i.empArea === args.areaID);
-    if (typeof args.locID === "number")
+    if (typeof args.locID === 'number')
       newPayload = newPayload.filter((i) => i.empLoc === args.locID);
-    if (typeof args.teamID === "number")
+    if (typeof args.teamID === 'number')
       newPayload = newPayload.filter((i) => i.teamID === args.teamID);
-    if (typeof args.posID === "number")
+    if (typeof args.posID === 'number')
       newPayload = newPayload.filter((i) => i.posID === args.posID);
-    if (typeof args.divID === "number")
+    if (typeof args.divID === 'number')
       newPayload = newPayload.filter((i) => i.divID === args.divID);
-    if (typeof args.order === "number") {
-      switch (args.order){  
+    if (typeof args.order === 'number') {
+      switch (args.order) {
         case 1: {
-          newPayload =  newPayload.sort((a, b) => {
+          newPayload = newPayload.sort((a, b) => {
             return (
               a.statusID - b.statusID ||
               a.displayName.localeCompare(b.displayName)
@@ -187,7 +189,7 @@ function clientFilter(
           break;
         }
         case 2: {
-          newPayload =  newPayload.sort((a, b) => {
+          newPayload = newPayload.sort((a, b) => {
             return (
               b.statusID - a.statusID ||
               a.displayName.localeCompare(b.displayName)
@@ -195,8 +197,7 @@ function clientFilter(
           });
           break;
         }
-    
-      } 
+      }
     }
   }
   return newPayload;
