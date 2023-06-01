@@ -16,18 +16,18 @@ import {
   IPayloadEmployeeBoardWithRatio,
   IReponseComment,
   IViewEmployeeBoard,
-} from 'src/model/viewModel/viewTableModel';
-import { AppService } from 'src/app.service';
+} from 'src/model/viewModel/viewTableModel'; 
 import { Cache } from 'cache-manager';
 import { CACHE_MANAGER, Inject } from '@nestjs/common';
-import { CommentArgs, EmployeeBoardArgs } from '../args/common-args';
+import { CommentArgs, EmployeeBoardArgs } from '../args/employee.args';
 import { PubSub } from 'graphql-subscriptions';
+import { EmployeeService } from 'src/services/employee.services';
 
 @Resolver(() => EmployeeBoardAllSub)
 export class EmpResolver {
   pubSub = new PubSub();
-  constructor(
-    private readonly appService: AppService,
+  constructor( 
+    private readonly employeeService: EmployeeService,
     @Inject(CACHE_MANAGER)
     private cache: Cache,
   ) {
@@ -108,7 +108,7 @@ export class EmpResolver {
   async UpdateEmployeeComment(
     @Args() args: CommentArgs,
   ): Promise<IReponseComment> { 
-    return await this.appService.updateEmployeeComment(args)
+    return await this.employeeService.updateEmployeeComment(args)
   }
 }
 /**

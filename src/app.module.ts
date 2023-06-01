@@ -9,10 +9,11 @@ import { ApolloServerPluginLandingPageDisabled } from 'apollo-server-core';
 import { DirectiveLocation, GraphQLDirective, GraphQLError } from 'graphql';
 import { stringTrimDirective } from './graphql/common/directives/stringTrim.directive';
 import { IErrorMsg } from './model/viewModel/generalModel';
-import { EmployeeBoardViewLoop } from './interval-data/employeeboard-interval';
 import { ViewDropListResolver } from './graphql/resolver/viewDropList.resolver';
 import { ConfigModule } from '@nestjs/config';
 import { DashBoardStatistics } from './graphql/resolver/viewTableResolver';
+import { EmployeeService } from './services/employee.services';
+import { DashBoardService } from './services/dashboard.services';
 const errorCodeReplace = (err: IErrorMsg): string => {
   if (err.message.includes('database connection'))
     return 'Connection DB Error!';
@@ -67,8 +68,9 @@ const errorCodeReplace = (err: IErrorMsg): string => {
     AppService,
     PrismaService,
     EmpResolver,
+    EmployeeService,
+    DashBoardService,
     ViewDropListResolver,
-    EmployeeBoardViewLoop,
     DashBoardStatistics,
   ],
 })

@@ -5,7 +5,6 @@ import {
   IPerAreaStatistics,
   ITotalAreaStatistics,
 } from 'src/model/viewModel/viewTableModel';
-import { AppService } from 'src/app.service';
 import {
   OPerAreaGraph,
   OPerAreaStatistics,
@@ -16,12 +15,13 @@ import {
   AreaStatisticArgs,
   DateSelectArgs,
   TotalStatisticArgs,
-} from '../args/common-args';
+} from '../args/dashboard.args';
 import { ODateSelect } from '../schema-model/viewDropList.model';
+import { DashBoardService } from 'src/services/dashboard.services';
 
 @Resolver(() => OPerAreaStatistics)
 export class DashBoardStatistics {
-  constructor(private readonly appService: AppService) {}
+  constructor(private readonly dashboardService: DashBoardService) {}
   /**
    *
    * @param args
@@ -32,7 +32,7 @@ export class DashBoardStatistics {
   async PerAreaStatistic(
     @Args() args: AreaStatisticArgs,
   ): Promise<IPerAreaStatistics[]> {
-    return await this.appService.getPerAreaStatistics(args);
+    return await this.dashboardService.getPerAreaStatistics(args);
   }
 
   /**
@@ -45,7 +45,7 @@ export class DashBoardStatistics {
   async TotalAreaStatistic(
     @Args() args: TotalStatisticArgs,
   ): Promise<ITotalAreaStatistics[]> {
-    return await this.appService.getTotalAreaStatistics(args);
+    return await this.dashboardService.getTotalAreaStatistics(args);
   }
   /**
    *
@@ -56,7 +56,7 @@ export class DashBoardStatistics {
    */
   @Query((returns) => [OPerAreaGraph])
   async PerAreaGraph(@Args() args: AreaGraphArgs): Promise<IPerAreaGraph[]> {
-    return await this.appService.getPerAreaGraph(args);
+    return await this.dashboardService.getPerAreaGraph(args);
   }
   /**
    *
@@ -68,6 +68,6 @@ export class DashBoardStatistics {
    */
   @Query((returns) => [ODateSelect])
   async DateSelectList(@Args() args: DateSelectArgs): Promise<IDateSelect[]> {
-    return await this.appService.getDateSelectList(args);
+    return await this.dashboardService.getDateSelectList(args);
   }
 }

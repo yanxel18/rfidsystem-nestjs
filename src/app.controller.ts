@@ -1,5 +1,5 @@
 import { Controller } from '@nestjs/common'; 
-import { EmployeeBoardViewLoop } from './interval-data/employeeboard-interval';
+import { EmployeeService } from './services/employee.services';
  
  
 @Controller()
@@ -8,8 +8,8 @@ export class AppController {
     /**
      * initiate employeeboard every second query to view_employee_board
      */
-    private empBoardViewLoop: EmployeeBoardViewLoop) {
-      empBoardViewLoop.EmployeeBoardAll(); 
+    private employeeService: EmployeeService) {
+      employeeService.EmployeeBoardAll(); 
   }
  
 
