@@ -49,10 +49,10 @@ export class EmpResolver {
    * @returns The total number of employee count to be displayed on the Board.
    * This also used on the paginator total number of workers.
    */
-  @Query((_returns) => Int)
+  @Query((_returns) => Int, { nullable: true })
   async EmpBoardMaxCountFilter(
     @Args() args: EmployeeBoardArgs,
-  ): Promise<Number | null> {
+  ): Promise<Number> {
     const cacheData: IPayloadEmployeeBoardWithRatio = await this.cache.get(
       'employeeAllView',
     );
@@ -104,7 +104,7 @@ export class EmpResolver {
    * @returns nothing
    * This mutation inserts or update a comment section on the board per worker id.
    */
-  @Mutation((_returns) => EmployeeCommentResponse)
+  @Mutation((_returns) => EmployeeCommentResponse, { nullable: true })
   async UpdateEmployeeComment(
     @Args() args: CommentArgs,
   ): Promise<IReponseComment> { 

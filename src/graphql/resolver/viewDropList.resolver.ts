@@ -12,7 +12,7 @@ export class ViewDropListResolver {
  * IArealist, ILocationList, ITeamList and IPositionList.
  */
   @Query((returns) => OViewDropList, { nullable: true })
-  async ViewDropList(): Promise<IViewDropList | null> { 
+  async ViewDropList(): Promise<IViewDropList> { 
     return JSON.parse(
       (await this.dashboardService.getViewDropList())[0].ViewDropList,
     )[0];

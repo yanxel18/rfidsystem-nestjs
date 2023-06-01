@@ -57,7 +57,7 @@ const errorCodeReplace = (err: IErrorMsg): string => {
         const graphQLFormattedError: IErrorMsg = {
           error: errorCodeReplace(error),
           statusCode:   error.extensions?.response?.statusCode ?? error.extensions?.code ,
-          message:  error.extensions?.response?.message ?? error.name
+          message:   error.extensions?.response?.message || error.message ||error.name 
         };
         return graphQLFormattedError;
       },

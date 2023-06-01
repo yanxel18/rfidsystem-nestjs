@@ -25,4 +25,4 @@ import { RedisEnum } from './errcode/errorcode';
   ],
   exports: [RedisEnum.REDIS_CACHE],
 })
-export class RedisCacheModule {}
+export class RedihsCacheModule {}

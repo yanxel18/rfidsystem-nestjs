@@ -1,5 +1,5 @@
 import { ArgsType, Field, Int } from "@nestjs/graphql";
-import {  IsNotEmpty } from "class-validator";
+import {  IsNotEmpty, IsUUID, MaxLength, ValidateIf } from "class-validator";
 
 @ArgsType()
 export class EmployeeBoardArgs {
@@ -33,9 +33,13 @@ export class EmployeeBoardArgs {
 @ArgsType()
 export class  CommentArgs { 
     @IsNotEmpty({message: "Employee ID must not be empty"})
+    @MaxLength(36, { message: 'EmpID value is too long!' })
+    @IsUUID("all",{each:true, message: "EmpID is not a valid format!"})
     @Field(type => String)
     empID: string
 
+    @MaxLength(20, { message: 'Comments should not exceed 20 characters!' })
+    @ValidateIf((_object, value) => value !== null)
     @Field(type => String, { nullable : true})
     comment?: string
 }
