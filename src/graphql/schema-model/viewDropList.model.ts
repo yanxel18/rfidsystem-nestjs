@@ -52,20 +52,20 @@ export class ODivList{
 
 @ObjectType()
 export class OViewDropList {
-    @Field((type) => [OAreaList], { nullable: true, defaultValue: []})
-    IAreaList: OAreaList[]| []
+    @Field((type) => [OAreaList], {defaultValue: []})
+    IAreaList: OAreaList[]
 
-    @Field((type) => [OLocationList], { nullable: true, defaultValue: []})
-    ILocationList: OLocationList[]| []
+    @Field((type) => [OLocationList], {defaultValue: []})
+    ILocationList: OLocationList[]
 
-    @Field((type) => [OTeamList], { nullable: true, defaultValue: []})
-    ITeamList: OTeamList[] | []
+    @Field((type) => [OTeamList], {defaultValue: []})
+    ITeamList: OTeamList[]
 
-    @Field((type) => [OPosList], { nullable: true, defaultValue: []})
-    IPositionList: OPosList[]| []
+    @Field((type) => [OPosList], { defaultValue: []})
+    IPositionList: OPosList[]
 
-    @Field((type) => [ODivList], { nullable: true, defaultValue: []})
-    IDivisionList: ODivList[]| []
+    @Field((type) => [ODivList], {defaultValue: []})
+    IDivisionList: ODivList[]
 }
 
 @ObjectType()

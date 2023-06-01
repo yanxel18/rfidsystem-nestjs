@@ -107,11 +107,8 @@ export class EmpResolver {
   @Mutation((_returns) => EmployeeCommentResponse)
   async UpdateEmployeeComment(
     @Args() args: CommentArgs,
-  ): Promise<IReponseComment> {
-    const exec = await this.appService.updateEmployeeComment(args);
-    return {
-      status: exec.toString(),
-    };
+  ): Promise<IReponseComment> { 
+    return await this.appService.updateEmployeeComment(args)
   }
 }
 /**

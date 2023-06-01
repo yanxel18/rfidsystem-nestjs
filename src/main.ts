@@ -1,4 +1,4 @@
-import { INestApplication } from '@nestjs/common';
+import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { PrismaService } from './prisma.service';
@@ -35,6 +35,7 @@ async function initializeSystem() {
   appConfig.set('json spaces', 2);
   const prismaService = app.get(PrismaService); 
   app.use(helmet());
+  app.useGlobalPipes(new ValidationPipe());
   await prismaService.enableShutdownHooks(app);
   await app.listen(process.env.PORT);
 }

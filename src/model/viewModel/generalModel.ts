@@ -1,5 +1,14 @@
 export interface IErrorMsg {
-    message: string;
-    code?: string | unknown;
-    name: string;
-  }
+  error: string | string[];
+  code?: string ;
+  name?: string;
+  extensions?: {
+      response?: {
+        statusCode: number;
+        message: string;
+      },
+      code?: number;
+  },
+  message: string;
+  statusCode?: number;
+}

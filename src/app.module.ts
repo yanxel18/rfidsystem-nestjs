@@ -16,9 +16,9 @@ import { DashBoardStatistics } from './graphql/resolver/viewTableResolver';
 const errorCodeReplace = (err: IErrorMsg): string => {
   if (err.message.includes('database connection'))
     return 'Connection DB Error!';
-  else if (err.message.includes(' Query.EmployeeBoardAll'))
+  else if (err.message.includes('Query.EmployeeBoardAll'))
     return 'Cached data not found!';
-  else return err.message;
+  else return 'SERVER_ERROR';
 };
 
 @Module({
@@ -52,11 +52,11 @@ const errorCodeReplace = (err: IErrorMsg): string => {
         ],
       },
       installSubscriptionHandlers: true,
-      formatError: (error: GraphQLError) => {
+      formatError: (error: any ) => {
         const graphQLFormattedError: IErrorMsg = {
-          message: errorCodeReplace(error),
-          code: error.extensions?.code || 'SERVER_ERROR',
-          name: error.extensions?.exception?.code || error.name,
+          error: errorCodeReplace(error),
+          statusCode:   error.extensions?.response?.statusCode ?? error.extensions?.code ,
+          message:  error.extensions?.response?.message ?? error.name
         };
         return graphQLFormattedError;
       },
@@ -73,3 +73,4 @@ const errorCodeReplace = (err: IErrorMsg): string => {
   ],
 })
 export class AppModule {}
+ 

@@ -1,4 +1,5 @@
 import { ArgsType, Field, Int } from "@nestjs/graphql";
+import {  IsNotEmpty } from "class-validator";
 
 @ArgsType()
 export class EmployeeBoardArgs {
@@ -30,22 +31,25 @@ export class EmployeeBoardArgs {
     order?: number
 }
 @ArgsType()
-export class CommentArgs {
+export class  CommentArgs { 
+    @IsNotEmpty({message: "Employee ID must not be empty"})
     @Field(type => String)
     empID: string
- 
+
     @Field(type => String, { nullable : true})
     comment?: string
 }
 
 @ArgsType()
 export class AreaStatisticArgs {
+    @IsNotEmpty({message: "Selected area must not be empty."})
     @Field(type=> String)
     areaSelectedDate: string
 }
 
 @ArgsType()
 export class TotalStatisticArgs {
+    @IsNotEmpty({message: "Total statistics selected date should not be empty."})
     @Field(type=> String)
     totalStatSelectedDate: string
 }

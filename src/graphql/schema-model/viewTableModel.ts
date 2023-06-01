@@ -3,14 +3,14 @@ import { Field, Float, Int, ObjectType } from '@nestjs/graphql';
 @ObjectType()
 export class OTotalStatistics {
 
-    @Field((type) => Int, { nullable: true})
-    workerInTotal: number| null;
+    @Field((type) => Int, { defaultValue: 0})
+    workerInTotal: number;
 
-    @Field((type) => Int, { nullable: true})
-    workerAllTotal: number| null;
+    @Field((type) => Int, { defaultValue: 0})
+    workerAllTotal: number;
 
-    @Field((type) => Float, { nullable: true})
-    workerInPercentage: number| null;
+    @Field((type) => Float, { defaultValue: 0})
+    workerInPercentage: number;
 }
 
 @ObjectType()

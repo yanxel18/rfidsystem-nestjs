@@ -1,10 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { PrismaService } from './prisma.service';
 import { Prisma } from '@prisma/client';
 import {
   IDateSelect,
   IPerAreaGraph,
   IPerAreaStatistics,
+  IReponseComment,
   ITotalAreaStatistics,
   IViewDropListQuery,
   IViewEmployeeBoard,
@@ -35,9 +36,10 @@ export class AppService {
     } catch (err) {
       if (err instanceof Prisma.PrismaClientKnownRequestError) {
         if (err.code === PrismaErrorCode.P2010) {
-          throw new Error('Database connection Error!');
+          throw new InternalServerErrorException(err.message, err.code);
         }
-      } else throw err;
+      }
+      throw new BadRequestException ("Cannot get monitoring data!",err.code);
     }
   }
   /**
@@ -52,9 +54,10 @@ export class AppService {
     } catch (err) {
       if (err instanceof Prisma.PrismaClientKnownRequestError) {
         if (err.code === PrismaErrorCode.P2010) {
-          throw new Error('Database connection Error!');
+          throw new InternalServerErrorException(err.message, err.code);
         }
-      } else throw err;
+      }
+      throw new BadRequestException ("Cannot get menu selection list!",err.code);
     }
   }
   /**
@@ -62,7 +65,7 @@ export class AppService {
    * @param param
    * @returns the result of an employee update or throw error.
    */
-  async updateEmployeeComment(@Args() param: CommentArgs): Promise<number> {
+  async updateEmployeeComment(@Args() param: CommentArgs): Promise<IReponseComment> {
     const notAllowed: string[] = ['-', 'ー'];
     const stringReg: RegExp = /^[a-zA-Z0-9]+$/i;
     try {
@@ -83,16 +86,22 @@ export class AppService {
           };
         }
       }
-      return await this.prisma.$executeRaw<any>`
+      const result = await this.prisma.$executeRaw<any>`
       EXEC sp_update_comment
       @empID = ${param.empID},
       @comment = ${param.comment}`;
+      if (result === 0) {
+        return {
+          status: 'success',
+        }
+      } 
     } catch (err) {
       if (err instanceof Prisma.PrismaClientKnownRequestError) {
         if (err.code === PrismaErrorCode.P2010) {
-          throw new Error('Database connection Error!');
+          throw new InternalServerErrorException(err.message, err.code);
         }
-      } else throw err;
+      } 
+      throw new BadRequestException ("Cannot update comment!",err.code);
     }
   }
   /**
@@ -109,8 +118,11 @@ export class AppService {
       from dbo.fni_show_worker_statistics(${args.areaSelectedDate})`;
     } catch (err) {
       if (err instanceof Prisma.PrismaClientKnownRequestError) {
-        throw err;
-      }
+        if (err.code === PrismaErrorCode.P2010) {
+          throw new InternalServerErrorException(err.message, err.code);
+        }
+      } 
+      throw new BadRequestException ("Cannot get per area statistics data!",err.code);
     }
   }
   /**
@@ -127,8 +139,11 @@ export class AppService {
 		  @dateselect = ${args.totalStatSelectedDate}`;
     } catch (err) {
       if (err instanceof Prisma.PrismaClientKnownRequestError) {
-        throw err;
+        if (err.code === PrismaErrorCode.P2010) {
+          throw new InternalServerErrorException(err.message, err.code);
+        }
       }
+      throw new BadRequestException ("Cannot get total area statistics!",err.code);
     }
   }
 
@@ -146,8 +161,11 @@ export class AppService {
       @pm_teamID = ${args.teamID}`;
     } catch (err) {
       if (err instanceof Prisma.PrismaClientKnownRequestError) {
-        throw err;
+        if (err.code === PrismaErrorCode.P2010) {
+          throw new InternalServerErrorException(err.message, err.code);
+        }
       }
+      throw new BadRequestException ("Cannot get per area graph data.",err.code);
     }
   }
   /**
@@ -164,8 +182,11 @@ export class AppService {
 		  @param_datefrom = ${args.dateFrom}`;
     } catch (err) {
       if (err instanceof Prisma.PrismaClientKnownRequestError) {
-        throw err;
+        if (err.code === PrismaErrorCode.P2010) {
+          throw new InternalServerErrorException(err.message, err.code);
+        }
       }
+      throw new BadRequestException ("Cannot get date list selection data.",err.code);
     }
   }
 }
