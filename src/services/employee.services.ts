@@ -51,7 +51,10 @@ export class EmployeeService {
     } catch (err) {
       if (err instanceof Prisma.PrismaClientKnownRequestError) {
         if (err.code === PrismaErrorCode.P2010) {
-          throw new InternalServerErrorException(err.message, err.code);
+          throw new BadRequestException(
+            `Raw query failed. ${err.message}`,
+            err.code,
+          );
         }
       }
       throw new BadRequestException('Cannot get monitoring data!', err.code);
@@ -97,7 +100,10 @@ export class EmployeeService {
     } catch (err) {
       if (err instanceof Prisma.PrismaClientKnownRequestError) {
         if (err.code === PrismaErrorCode.P2010) {
-          throw new InternalServerErrorException(err.message, err.code);
+          throw new BadRequestException(
+            `Raw query failed. ${err.message}`,
+            err.code,
+          );
         }
       }
       throw new BadRequestException('Cannot update comment!', err.code);

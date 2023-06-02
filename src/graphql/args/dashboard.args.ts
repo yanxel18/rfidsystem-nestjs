@@ -21,17 +21,17 @@ export class TotalStatisticArgs {
 
 @ArgsType()
 export class AreaGraphArgs {
-  @Max(32767, { message: 'areaID must not be greater than 32767.' })
+  @Max(32767, { message: 'areaID exceeds the acceptable value.' })
   @ValidateIf((_object, value) => value !== null)
   @Field((type) => Int, { nullable: true })
   areaID: number;
 
-  @Max(32767, { message: 'locID must not be greater than 32767.' })
+  @Max(32767, { message: 'locID exceeds the acceptable value.' })
   @ValidateIf((_object, value) => value !== null)
   @Field((type) => Int, { nullable: true })
   locID: number;
 
-  @Max(32767, { message: 'teamID must not be greater than 32767.' })
+  @Max(32767, { message: 'teamID exceeds the acceptable value.' })
   @ValidateIf((_object, value) => value !== null)
   @Field((type) => Int, { nullable: true })
   teamID: number;

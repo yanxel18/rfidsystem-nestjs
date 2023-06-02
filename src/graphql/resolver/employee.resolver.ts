@@ -122,15 +122,15 @@ function payloadFilter(
   payload: IPayloadEmployeeBoardWithRatio,
   args: IEmployeeBoardArgs,
 ): IPayloadEmployeeBoardWithRatio {
-  const excludeList: number[] = [3, 4];
+  const excludeStatusID: number[] = [3, 4];
   let newPayload = payload.EmployeeBoardAllSub;
   let currentWorkerCount: number = 0;
   let totalWorkerCount: number = 0;
   let currentPercent: string = '0/0';
   newPayload = clientFilter(newPayload, args);
   currentWorkerCount = newPayload.filter(
-    (x) => x.statusID === 1 && !excludeList.some((ex) => x.statusID === ex)).length;
-  totalWorkerCount = newPayload.filter((x) => !excludeList.some((ex) => x.statusID === ex)).length;
+    (x) => x.statusID === 1 && !excludeStatusID.some((ex) => x.statusID === ex)).length;
+  totalWorkerCount = newPayload.filter((x) => !excludeStatusID.some((ex) => x.statusID === ex)).length;
   currentPercent = `${
     totalWorkerCount !== 0
       ? Math.round((currentWorkerCount / totalWorkerCount) * 100).toString()
@@ -155,10 +155,9 @@ function payloadFilter(
 }
 
 function clientFilter(
-  payload: IViewEmployeeBoard[],
+  newPayload: IViewEmployeeBoard[],
   args: IEmployeeBoardArgs,
-): IViewEmployeeBoard[] {
-  let newPayload = payload;
+): IViewEmployeeBoard[] { 
   if (typeof args.search === 'string')
     newPayload = newPayload.filter((i) =>
       i.displayName.includes(args.search.trim()),

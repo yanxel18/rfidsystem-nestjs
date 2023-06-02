@@ -6,7 +6,7 @@ import { PrismaService } from './prisma.service';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { ApolloServerPluginLandingPageDisabled } from 'apollo-server-core';
-import { DirectiveLocation, GraphQLDirective, GraphQLError } from 'graphql';
+import { DirectiveLocation, GraphQLDirective } from 'graphql';
 import { stringTrimDirective } from './graphql/common/directives/stringTrim.directive';
 import { IErrorMsg } from './model/viewModel/generalModel';
 import { ViewDropListResolver } from './graphql/resolver/viewDropList.resolver';

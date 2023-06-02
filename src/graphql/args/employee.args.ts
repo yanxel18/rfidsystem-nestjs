@@ -4,31 +4,31 @@ import {  IsNotEmpty, IsUUID, MaxLength, ValidateIf } from "class-validator";
 @ArgsType()
 export class EmployeeBoardArgs {
     @Field({ nullable: true})
-    search?: string
+    search: string
 
     @Field(type => Int, { nullable: true})
-    areaID?: number
+    areaID: number
 
     @Field(type => Int, { nullable: true})
-    teamID?: number
+    teamID: number
 
     @Field(type => Int, { nullable: true})
-    locID?: number
+    locID: number
 
     @Field(type => Int, { nullable: true})
-    posID?: number
+    posID: number
 
     @Field(type => Int, { nullable: true})
-    divID?: number
+    divID: number
 
     @Field(type => Int, { nullable: true})
-    pageoffset?: number
+    pageoffset: number
 
     @Field(type => Int, { nullable: true})
-    pagenum?: number
+    pagenum: number
 
     @Field(type => Int, { nullable: true})
-    order?: number
+    order: number
 }
 @ArgsType()
 export class  CommentArgs { 
@@ -41,6 +41,6 @@ export class  CommentArgs {
     @MaxLength(20, { message: 'Comments should not exceed 20 characters!' })
     @ValidateIf((_object, value) => value !== null)
     @Field(type => String, { nullable : true})
-    comment?: string
+    comment: string
 }
 

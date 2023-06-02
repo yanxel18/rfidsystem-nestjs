@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
 import { Prisma } from '@prisma/client';
 import {
@@ -17,13 +21,11 @@ import {
   TotalStatisticArgs,
 } from 'src/graphql/args/dashboard.args';
 
-
-
 @Injectable()
 export class DashBoardService {
-    constructor(private prisma: PrismaService){}
+  constructor(private prisma: PrismaService) {}
 
-      /**
+  /**
    *
    * @returns the dropdownlist for area list, location list and team list.
    */
@@ -35,12 +37,18 @@ export class DashBoardService {
     } catch (err) {
       if (err instanceof Prisma.PrismaClientKnownRequestError) {
         if (err.code === PrismaErrorCode.P2010) {
-          throw new InternalServerErrorException(err.message, err.code);
+          throw new BadRequestException(
+            `Raw query failed. ${err.message}`,
+            err.code,
+          );
         }
       }
-      throw new BadRequestException ("Cannot get menu selection list!",err.code);
+      throw new BadRequestException(
+        'Cannot get menu selection list!',
+        err.code,
+      );
     }
-  } 
+  }
   /**
    *
    * @param dateval
@@ -56,10 +64,16 @@ export class DashBoardService {
     } catch (err) {
       if (err instanceof Prisma.PrismaClientKnownRequestError) {
         if (err.code === PrismaErrorCode.P2010) {
-          throw new InternalServerErrorException(err.message, err.code);
+          throw new BadRequestException(
+            `Raw query failed. ${err.message}`,
+            err.code,
+          );
         }
-      } 
-      throw new BadRequestException ("Cannot get per area statistics data!",err.code);
+      }
+      throw new BadRequestException(
+        'Cannot get per area statistics data!',
+        err.code,
+      );
     }
   }
   /**
@@ -77,10 +91,16 @@ export class DashBoardService {
     } catch (err) {
       if (err instanceof Prisma.PrismaClientKnownRequestError) {
         if (err.code === PrismaErrorCode.P2010) {
-          throw new InternalServerErrorException(err.message, err.code);
+          throw new BadRequestException(
+            `Raw query failed. ${err.message}`,
+            err.code,
+          );
         }
       }
-      throw new BadRequestException ("Cannot get total area statistics!",err.code);
+      throw new BadRequestException(
+        'Cannot get total area statistics!',
+        err.code,
+      );
     }
   }
 
@@ -99,10 +119,16 @@ export class DashBoardService {
     } catch (err) {
       if (err instanceof Prisma.PrismaClientKnownRequestError) {
         if (err.code === PrismaErrorCode.P2010) {
-          throw new InternalServerErrorException(err.message, err.code);
+          throw new BadRequestException(
+            `Raw query failed. ${err.message}`,
+            err.code,
+          );
         }
       }
-      throw new BadRequestException ("Cannot get per area graph data.",err.code);
+      throw new BadRequestException(
+        'Cannot get per area graph data.',
+        err.code,
+      );
     }
   }
   /**
@@ -120,10 +146,16 @@ export class DashBoardService {
     } catch (err) {
       if (err instanceof Prisma.PrismaClientKnownRequestError) {
         if (err.code === PrismaErrorCode.P2010) {
-          throw new InternalServerErrorException(err.message, err.code);
+          throw new BadRequestException(
+            `Raw query failed. ${err.message}`,
+            err.code,
+          );
         }
       }
-      throw new BadRequestException ("Cannot get date list selection data.",err.code);
+      throw new BadRequestException(
+        'Cannot get date list selection data.',
+        err.code,
+      );
     }
   }
 }

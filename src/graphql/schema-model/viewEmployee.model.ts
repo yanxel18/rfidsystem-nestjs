@@ -9,81 +9,93 @@ export class EmployeeBoard {
   tagID: string;
 
   @Field({ nullable: true })
-  lastUpdate?: string;
+  lastUpdate: string;
 
   @Field({ nullable: true })
-  timeElapse?: string;
+  timeElapse: string;
 
   @Field({ nullable: true })
-  displayName?: string;
+  displayName: string;
 
   @Field(() => Int)
   statusID: number;
 
   @Field({ nullable: true })
-  sign?: string;
+  sign: string;
 
   @Field((type) => Int, { nullable: true })
-  readwriterID?: number;
+  readwriterID: number;
 
   @Field({ nullable: true })
-  comment?: string;
+  comment: string;
 
   @Field((type) => Int, { nullable: true })
-  areaID?: number;
+  areaID: number;
 
   @Field({ nullable: true })
-  areaDesc?: string;
+  areaDesc: string;
 
   @Field((type) => Int, { nullable: true })
-  alarm?: number;
+  alarm: number;
 
   @Field((type) => Int, { nullable: true })
-  setAlarm?: number;
+  setAlarm: number;
 
   @Field((type) => Int, { nullable: true })
-  setCount?: number;
+  setCount: number;
 
   @Field((type) => Int, { nullable: true })
-  locID?: number;
+  locID: number;
 
   @Field({ nullable: true })
-  locDesc?: string;
+  locDesc: string;
 
   @Field({ nullable: true })
-  floor?: string;
+  floor: string;
 
   @Field({ nullable: true })
-  buildloc?: string;
+  buildloc: string;
 
   @Field((type) => Int, { nullable: true })
-  empProcessID?: number;
+  empProcessID: number;
 
   @Field({ nullable: true })
-  processName?: string;
+  processName: string;
 
   @Field((type) => Int, { nullable: true })
-  teamID?: number | null;
+  teamID: number | null;
 
   @Field({ nullable: true })
-  teamName?: string;
+  teamName: string;
 
   @Field({ nullable: true })
-  leaveStart?: Date;
+  leaveStart: Date;
 
   @Field({ nullable: true })
-  leaveEnd?: Date;
+  leaveEnd: Date;
 
   @Field((type) => Int, { nullable: true })
-  leaveType?: number;
+  leaveType: number;
 
   @Field((type) => Int, { nullable: true })
-  empLoc?: number | null;
+  empLoc: number | null;
 
   @Field((type) => Int, { nullable: true })
-  empArea?: number | null;
+  empArea: number | null;
 }
  
+@ObjectType()
+export class EmployeeCountRatio {
+  @Field({ nullable: true })
+  currentPercent: string;
+
+  @Field({ nullable: true })
+  currentWorkerCount: number;
+
+  @Field({ nullable: true })
+  totalWorkerCount: number;
+
+}
 
 @ObjectType()
 export class EmployeeBoardAllSub {
@@ -91,31 +103,20 @@ export class EmployeeBoardAllSub {
   EmployeeBoardAllSub: EmployeeBoard[]; 
 
   @Field((type) => EmployeeCountRatio, { nullable: true })
-  AreaRatio: Partial<EmployeeCountRatio>; 
+  AreaRatio: EmployeeCountRatio; 
 }
  
 
 @ObjectType()
 export class EmployeeBoardCount {
   @Field((type) => Int, { nullable: true })
-  EmpCount?: number;
+  EmpCount: number;
 }
  
-@ObjectType()
-export class EmployeeCountRatio {
-  @Field({ nullable: true })
-  currentPercent?: string;
 
-  @Field({ nullable: true })
-  currentWorkerCount?: number;
-
-  @Field({ nullable: true })
-  totalWorkerCount?: number;
-
-}
 
 @ObjectType()
 export class EmployeeCommentResponse {
   @Field({ nullable: true })
-  status?: string;
+  status: string;
 }
