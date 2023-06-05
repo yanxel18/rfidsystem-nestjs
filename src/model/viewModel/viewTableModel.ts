@@ -28,6 +28,7 @@ export interface IViewEmployeeBoard {
   empArea: number | null;
   divID: number | null;
   posID: number | null;
+  statusOrder: number | null;
 }
 
 export interface IPayloadEmployeeBoard {

@@ -17,7 +17,7 @@ export class EmployeeBoard {
   @Field({ nullable: true })
   displayName: string;
 
-  @Field(() => Int)
+  @Field((type) => Int)
   statusID: number;
 
   @Field({ nullable: true })
@@ -82,6 +82,9 @@ export class EmployeeBoard {
 
   @Field((type) => Int, { nullable: true })
   empArea: number | null;
+
+  @Field((type) => Int, { nullable: true })
+  statusOrder: number;
 }
 
 @ObjectType()

@@ -1,11 +1,5 @@
 import { ArgsType, Field, Int } from '@nestjs/graphql';
-import {
-  IsDate,
-  IsNotEmpty,
-  Max,
-  MaxLength,
-  ValidateIf,
-} from 'class-validator';
+import { IsNotEmpty, Max, MaxLength, ValidateIf } from 'class-validator';
 
 @ArgsType()
 export class AreaStatisticArgs {

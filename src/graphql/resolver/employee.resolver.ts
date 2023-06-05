@@ -70,9 +70,6 @@ export class EmpResolver {
   async EmployeeBoardAll(
     @Args() _args: EmployeeBoardArgs,
   ): Promise<IPayloadEmployeeBoardWithRatio | []> {
-    const cacheData: IPayloadEmployeeBoardWithRatio = await this.cache.get(
-      'employeeAllView',
-    );
     return [];
   }
   /**
@@ -181,7 +178,7 @@ function clientFilter(
         case 1: {
           newPayload = newPayload.sort((a, b) => {
             return (
-              a.statusID - b.statusID ||
+              a.statusOrder - b.statusOrder ||
               a.displayName.localeCompare(b.displayName)
             );
           });
@@ -190,7 +187,7 @@ function clientFilter(
         case 2: {
           newPayload = newPayload.sort((a, b) => {
             return (
-              b.statusID - a.statusID ||
+              b.statusOrder - a.statusOrder ||
               a.displayName.localeCompare(b.displayName)
             );
           });
