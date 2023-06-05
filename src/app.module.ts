@@ -53,11 +53,13 @@ const errorCodeReplace = (err: IErrorMsg): string => {
         ],
       },
       installSubscriptionHandlers: true,
-      formatError: (error: any ) => {
+      formatError: (error: any) => {
         const graphQLFormattedError: IErrorMsg = {
           error: errorCodeReplace(error),
-          statusCode:   error.extensions?.response?.statusCode ?? error.extensions?.code ,
-          message:   error.extensions?.response?.message || error.message ||error.name 
+          statusCode:
+            error.extensions?.response?.statusCode ?? error.extensions?.code,
+          message:
+            error.extensions?.response?.message || error.message || error.name,
         };
         return graphQLFormattedError;
       },
@@ -75,4 +77,3 @@ const errorCodeReplace = (err: IErrorMsg): string => {
   ],
 })
 export class AppModule {}
- 

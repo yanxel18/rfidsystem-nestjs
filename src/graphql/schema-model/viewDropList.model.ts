@@ -2,75 +2,69 @@ import { Field, Int, ObjectType } from '@nestjs/graphql';
 
 @ObjectType()
 export class OAreaList {
+  @Field((type) => Int)
+  areaID: number;
 
-    @Field((type) => Int)
-    areaID: number;
-
-    @Field({ nullable: true })
-    areaDesc: string;
+  @Field({ nullable: true })
+  areaDesc: string;
 }
 
 @ObjectType()
 export class OLocationList {
-    
-    @Field((type) => Int)
-    locID: number;
+  @Field((type) => Int)
+  locID: number;
 
-    @Field({ nullable: true })
-    buildloc: string;
+  @Field({ nullable: true })
+  buildloc: string;
 }
 
 @ObjectType()
 export class OTeamList {
+  @Field((type) => Int)
+  teamID: number;
 
-    @Field((type) => Int)
-    teamID: number;
-  
-    @Field({ nullable: true })
-    teamName: string; 
-
+  @Field({ nullable: true })
+  teamName: string;
 }
 
 @ObjectType()
 export class OPosList {
-    @Field((type)=> Int)
-    posID: number;
+  @Field((type) => Int)
+  posID: number;
 
-    @Field({ nullable: true })
-    posName: string;
+  @Field({ nullable: true })
+  posName: string;
 }
 
 @ObjectType()
-export class ODivList{
-    @Field((type) => Int)
-    divID: number;
+export class ODivList {
+  @Field((type) => Int)
+  divID: number;
 
-    @Field({ nullable: true })
-    divName: string;
+  @Field({ nullable: true })
+  divName: string;
 }
-
 
 @ObjectType()
 export class OViewDropList {
-    @Field((type) => [OAreaList], {nullable: true, defaultValue: []})
-    IAreaList: OAreaList[]
+  @Field((type) => [OAreaList], { nullable: true, defaultValue: [] })
+  IAreaList: OAreaList[];
 
-    @Field((type) => [OLocationList], {nullable: true, defaultValue: []})
-    ILocationList: OLocationList[]
+  @Field((type) => [OLocationList], { nullable: true, defaultValue: [] })
+  ILocationList: OLocationList[];
 
-    @Field((type) => [OTeamList], {nullable: true, defaultValue: []})
-    ITeamList: OTeamList[]
+  @Field((type) => [OTeamList], { nullable: true, defaultValue: [] })
+  ITeamList: OTeamList[];
 
-    @Field((type) => [OPosList], {nullable: true,  defaultValue: []})
-    IPositionList: OPosList[]
+  @Field((type) => [OPosList], { nullable: true, defaultValue: [] })
+  IPositionList: OPosList[];
 
-    @Field((type) => [ODivList], {nullable: true, defaultValue: []})
-    IDivisionList: ODivList[]
+  @Field((type) => [ODivList], { nullable: true, defaultValue: [] })
+  IDivisionList: ODivList[];
 }
 
 @ObjectType()
 export class ODateSelect {
-
-    @Field({ nullable: true})
-    DateSelect: string 
+  @Field({ nullable: true })
+  DateSelect: string;
 }

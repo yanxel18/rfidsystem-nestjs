@@ -16,7 +16,7 @@ import {
   IPayloadEmployeeBoardWithRatio,
   IReponseComment,
   IViewEmployeeBoard,
-} from 'src/model/viewModel/viewTableModel'; 
+} from 'src/model/viewModel/viewTableModel';
 import { Cache } from 'cache-manager';
 import { CACHE_MANAGER, Inject } from '@nestjs/common';
 import { CommentArgs, EmployeeBoardArgs } from '../args/employee.args';
@@ -26,7 +26,7 @@ import { EmployeeService } from 'src/services/employee.services';
 @Resolver(() => EmployeeBoardAllSub)
 export class EmpResolver {
   pubSub = new PubSub();
-  constructor( 
+  constructor(
     private readonly employeeService: EmployeeService,
     @Inject(CACHE_MANAGER)
     private cache: Cache,
@@ -52,7 +52,7 @@ export class EmpResolver {
   @Query((_returns) => Int, { nullable: true })
   async EmpBoardMaxCountFilter(
     @Args() args: EmployeeBoardArgs,
-  ): Promise<Number> {
+  ): Promise<number> {
     const cacheData: IPayloadEmployeeBoardWithRatio = await this.cache.get(
       'employeeAllView',
     );
@@ -107,8 +107,8 @@ export class EmpResolver {
   @Mutation((_returns) => EmployeeCommentResponse, { nullable: true })
   async UpdateEmployeeComment(
     @Args() args: CommentArgs,
-  ): Promise<IReponseComment> { 
-    return await this.employeeService.updateEmployeeComment(args)
+  ): Promise<IReponseComment> {
+    return await this.employeeService.updateEmployeeComment(args);
   }
 }
 /**
@@ -124,13 +124,16 @@ function payloadFilter(
 ): IPayloadEmployeeBoardWithRatio {
   const excludeStatusID: number[] = [3, 4];
   let newPayload = payload.EmployeeBoardAllSub;
-  let currentWorkerCount: number = 0;
-  let totalWorkerCount: number = 0;
-  let currentPercent: string = '0/0';
+  let currentWorkerCount = 0;
+  let totalWorkerCount = 0;
+  let currentPercent = '0/0';
   newPayload = clientFilter(newPayload, args);
   currentWorkerCount = newPayload.filter(
-    (x) => x.statusID === 1 && !excludeStatusID.some((ex) => x.statusID === ex)).length;
-  totalWorkerCount = newPayload.filter((x) => !excludeStatusID.some((ex) => x.statusID === ex)).length;
+    (x) => x.statusID === 1 && !excludeStatusID.some((ex) => x.statusID === ex),
+  ).length;
+  totalWorkerCount = newPayload.filter(
+    (x) => !excludeStatusID.some((ex) => x.statusID === ex),
+  ).length;
   currentPercent = `${
     totalWorkerCount !== 0
       ? Math.round((currentWorkerCount / totalWorkerCount) * 100).toString()
@@ -157,7 +160,7 @@ function payloadFilter(
 function clientFilter(
   newPayload: IViewEmployeeBoard[],
   args: IEmployeeBoardArgs,
-): IViewEmployeeBoard[] { 
+): IViewEmployeeBoard[] {
   if (typeof args.search === 'string')
     newPayload = newPayload.filter((i) =>
       i.displayName.includes(args.search.trim()),

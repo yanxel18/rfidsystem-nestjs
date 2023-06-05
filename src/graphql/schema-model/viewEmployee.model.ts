@@ -83,7 +83,7 @@ export class EmployeeBoard {
   @Field((type) => Int, { nullable: true })
   empArea: number | null;
 }
- 
+
 @ObjectType()
 export class EmployeeCountRatio {
   @Field({ nullable: true })
@@ -94,26 +94,22 @@ export class EmployeeCountRatio {
 
   @Field({ nullable: true })
   totalWorkerCount: number;
-
 }
 
 @ObjectType()
 export class EmployeeBoardAllSub {
   @Field((type) => [EmployeeBoard], { nullable: true })
-  EmployeeBoardAllSub: EmployeeBoard[]; 
+  EmployeeBoardAllSub: EmployeeBoard[];
 
   @Field((type) => EmployeeCountRatio, { nullable: true })
-  AreaRatio: EmployeeCountRatio; 
+  AreaRatio: EmployeeCountRatio;
 }
- 
 
 @ObjectType()
 export class EmployeeBoardCount {
   @Field((type) => Int, { nullable: true })
   EmpCount: number;
 }
- 
-
 
 @ObjectType()
 export class EmployeeCommentResponse {

@@ -4,10 +4,10 @@ import { AppModule } from './app.module';
 import { PrismaService } from './prisma.service';
 import cluster from 'cluster';
 import * as os from 'os';
-import helmet from 'helmet'; 
+import helmet from 'helmet';
 const cpus = os.cpus();
 
-async function bootstrap() { 
+async function bootstrap() {
   if (process.env.NODE_ENV !== 'production') initializeSystem();
   else {
     if (cluster.isPrimary) {
@@ -20,7 +20,7 @@ async function bootstrap() {
         cluster.fork();
         console.log(`worker ${worker.process.pid} died`);
       });
-    }else initializeSystem();
+    } else initializeSystem();
   }
 }
 
@@ -33,7 +33,7 @@ async function initializeSystem() {
   appConfig.disable('x-powered-by');
   appConfig.set('etag', false);
   appConfig.set('json spaces', 2);
-  const prismaService = app.get(PrismaService); 
+  const prismaService = app.get(PrismaService);
   app.use(helmet());
   app.useGlobalPipes(new ValidationPipe());
   await prismaService.enableShutdownHooks(app);

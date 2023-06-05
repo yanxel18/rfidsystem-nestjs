@@ -6,7 +6,7 @@ export function stringTrimDirective(
   directiveName: string,
 ) {
   return mapSchema(schema, {
-    [MapperKind.OBJECT_FIELD]: fieldConfig => {
+    [MapperKind.OBJECT_FIELD]: (fieldConfig) => {
       const stringDirective = getDirective(
         schema,
         fieldConfig,
@@ -14,7 +14,7 @@ export function stringTrimDirective(
       )?.[0];
 
       if (stringDirective) {
-        const { resolve = defaultFieldResolver } = fieldConfig; 
+        const { resolve = defaultFieldResolver } = fieldConfig;
         fieldConfig.resolve = async function (source, args, context, info) {
           const result = await resolve(source, args, context, info);
           if (typeof result === 'string') {

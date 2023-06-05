@@ -1,5 +1,11 @@
 import { ArgsType, Field, Int } from '@nestjs/graphql';
-import { IsDate, IsNotEmpty, Max, MaxLength, ValidateIf } from 'class-validator';
+import {
+  IsDate,
+  IsNotEmpty,
+  Max,
+  MaxLength,
+  ValidateIf,
+} from 'class-validator';
 
 @ArgsType()
 export class AreaStatisticArgs {
@@ -38,9 +44,9 @@ export class AreaGraphArgs {
 }
 
 @ArgsType()
-export class DateSelectArgs {  
+export class DateSelectArgs {
   @MaxLength(20, { message: 'Date value is too long!' })
-  @ValidateIf((_object, value) => value !== null) 
+  @ValidateIf((_object, value) => value !== null)
   @Field((type) => String, { nullable: true })
   dateFrom?: string;
 }

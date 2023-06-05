@@ -69,7 +69,7 @@ export class EmployeeService {
     @Args() param: CommentArgs,
   ): Promise<IReponseComment> {
     const notAllowed: string[] = ['-', 'ー'];
-    const stringReg: RegExp = /^[a-zA-Z0-9]+$/i;
+    const stringReg = /^[a-zA-Z0-9]+$/i;
     try {
       if (typeof param.comment === 'string') {
         if (
