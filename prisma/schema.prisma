@@ -53,7 +53,7 @@ model rf_employee_bldglist {
   rf_users_rf_employee_bldglist_rwa_modifiedby_idTorf_users rf_users?          @relation("rf_employee_bldglist_rwa_modifiedby_idTorf_users", fields: [rwa_modifiedby_id], references: [rsr_user_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_employee_bldglist_rf_users1")
   rf_employee_list                                          rf_employee_list[]
 
-  @@index([rwa_empbldg_id, rwa_deleted], map: "IX_rf_employee_bldglist")
+  @@index([rwa_empbldg_id, rwa_deleted, rwa_empbldg_desc], map: "IX_rf_employee_bldglist")
 }
 
 model rf_employee_board {
@@ -101,11 +101,16 @@ model rf_employee_list {
   rfe_deleted                                           Boolean?
   rfe_emp_rw_id                                         Int?
   rfe_gid_card                                          String?                     @db.NVarChar(20)
+  rfe_pos_id                                            Int?                        @db.TinyInt
+  rfe_div_id                                            Int?                        @db.SmallInt
+  rfe_modified_date                                     DateTime?                   @db.DateTime
   rf_employee_board                                     rf_employee_board[]
+  rf_division                                           rf_division?                @relation(fields: [rfe_div_id], references: [rdv_div_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_employee_list_rf_division")
   rf_employee_bldglist                                  rf_employee_bldglist?       @relation(fields: [rfe_emp_bldg_id], references: [rwa_empbldg_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_employee_list_rf_employee_bldglist")
   rf_employee_proclist                                  rf_employee_proclist?       @relation(fields: [rfe_emp_process_id], references: [rwp_empprocess_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_employee_list_rf_employee_proclist")
   rf_employee_teamlist                                  rf_employee_teamlist?       @relation(fields: [rfe_emp_team_id], references: [rte_empteam_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_employee_list_rf_employee_teamlist")
   rf_gender                                             rf_gender?                  @relation(fields: [rfe_gender_id], references: [rfg_gender_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_employee_list_rf_gender")
+  rf_position                                           rf_position?                @relation(fields: [rfe_pos_id], references: [rfp_pos_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_employee_list_rf_position")
   rf_readwriter_list                                    rf_readwriter_list?         @relation(fields: [rfe_emp_rw_id], references: [rwl_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_employee_list_rf_readwriter_list")
   rf_users_rf_employee_list_rfe_createdby_idTorf_users  rf_users?                   @relation("rf_employee_list_rfe_createdby_idTorf_users", fields: [rfe_createdby_id], references: [rsr_user_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_employee_list_rf_users")
   rf_users_rf_employee_list_rfe_modifiedby_idTorf_users rf_users?                   @relation("rf_employee_list_rfe_modifiedby_idTorf_users", fields: [rfe_modifiedby_id], references: [rsr_user_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_employee_list_rf_users1")
@@ -114,7 +119,7 @@ model rf_employee_list {
   rf_rfidtag_list                                       rf_rfidtag_list[]
 
   @@index([rfe_emp_id, rfe_fname, rfe_lname, rfe_displayname, rfe_emp_process_id, rfe_emp_bldg_id, rfe_emp_rw_id, rfe_emp_team_id, rfe_gid, rfe_deleted, rfe_active, rfe_gid_card], map: "IX_rf_employee_list_1")
-  @@index([rfe_emp_id, rfe_emp_process_id, rfe_emp_team_id, rfe_deleted, rfe_active], map: "IX_rf_employee_list")
+  @@index([rfe_emp_id, rfe_emp_process_id, rfe_emp_team_id, rfe_deleted, rfe_active, rfe_div_id, rfe_pos_id], map: "IX_rf_employee_list")
   @@index([rfe_emp_id, rfe_deleted, rfe_active], map: "IX_rf_employee_list_2")
 }
 
@@ -149,6 +154,7 @@ model rf_employee_proclist {
   rf_users_rf_employee_proclist_rwp_modifiedby_idTorf_users rf_users?          @relation("rf_employee_proclist_rwp_modifiedby_idTorf_users", fields: [rwp_modifiedby_id], references: [rsr_user_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_employee_proclist_rf_users1")
 
   @@index([rwp_empprocess_id, rwp_deleted], map: "IX_rf_employee_proclist")
+  @@index([rwp_process_desc], map: "IX_rf_employee_proclist_1")
 }
 
 model rf_employee_shiftlist {
@@ -183,6 +189,7 @@ model rf_employee_teamlist {
   rf_users_rf_employee_teamlist_rte_createdby_idTorf_users  rf_users?              @relation("rf_employee_teamlist_rte_createdby_idTorf_users", fields: [rte_createdby_id], references: [rsr_user_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_employee_teamlist_rf_users1")
 
   @@index([rte_empteam_id, rte_empshift_id, rte_deleted, rte_empteam_desc], map: "IX_rf_employee_teamlist")
+  @@index([rte_empteam_desc], map: "IX_rf_employee_teamlist_1")
 }
 
 model rf_gender {
@@ -298,6 +305,7 @@ model rf_status {
   rfs_modifiedby_id                              String?                     @db.UniqueIdentifier
   rfs_modified_date                              DateTime?                   @db.DateTime
   rfs_deleted                                    Boolean?
+  rfs_order                                      Int?                        @db.TinyInt
   rf_area_list                                   rf_area_list[]
   rf_employee_board                              rf_employee_board[]
   rf_employee_logs                               rf_employee_logs[]
@@ -306,6 +314,7 @@ model rf_status {
   rf_users_rf_status_rfs_modifiedby_idTorf_users rf_users?                   @relation("rf_status_rfs_modifiedby_idTorf_users", fields: [rfs_modifiedby_id], references: [rsr_user_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_status_rf_users1")
 
   @@index([rf_status_id, rfs_sign, rfs_deleted], map: "IX_rf_status")
+  @@index([rfs_sign, rf_status_id], map: "IX_rf_status_1")
 }
 
 model rf_temp_gatedata {
@@ -367,6 +376,8 @@ model rf_users {
   rf_access_rights_rf_access_rights_ras_modifiedby_idTorf_users           rf_access_rights[]      @relation("rf_access_rights_ras_modifiedby_idTorf_users")
   rf_area_list_rf_area_list_rfa_createdby_idTorf_users                    rf_area_list[]          @relation("rf_area_list_rfa_createdby_idTorf_users")
   rf_area_list_rf_area_list_rfa_modifiedby_idTorf_users                   rf_area_list[]          @relation("rf_area_list_rfa_modifiedby_idTorf_users")
+  rf_division_rf_division_rdv_createdby_idTorf_users                      rf_division[]           @relation("rf_division_rdv_createdby_idTorf_users")
+  rf_division_rf_division_rdv_modifiedby_idTorf_users                     rf_division[]           @relation("rf_division_rdv_modifiedby_idTorf_users")
   rf_employee_bldglist_rf_employee_bldglist_rwa_createdby_idTorf_users    rf_employee_bldglist[]  @relation("rf_employee_bldglist_rwa_createdby_idTorf_users")
   rf_employee_bldglist_rf_employee_bldglist_rwa_modifiedby_idTorf_users   rf_employee_bldglist[]  @relation("rf_employee_bldglist_rwa_modifiedby_idTorf_users")
   rf_employee_board_rf_employee_board_rbe_createdby_idTorf_users          rf_employee_board[]     @relation("rf_employee_board_rbe_createdby_idTorf_users")
@@ -381,6 +392,8 @@ model rf_users {
   rf_employee_teamlist_rf_employee_teamlist_rte_createdby_idTorf_users    rf_employee_teamlist[]  @relation("rf_employee_teamlist_rte_createdby_idTorf_users")
   rf_gender_rf_gender_rfg_createdby_idTorf_users                          rf_gender[]             @relation("rf_gender_rfg_createdby_idTorf_users")
   rf_gender_rf_gender_rfg_modifiedby_idTorf_users                         rf_gender[]             @relation("rf_gender_rfg_modifiedby_idTorf_users")
+  rf_position_rf_position_rfp_createdby_idTorf_users                      rf_position[]           @relation("rf_position_rfp_createdby_idTorf_users")
+  rf_position_rf_position_rfp_modifiedby_idTorf_users                     rf_position[]           @relation("rf_position_rfp_modifiedby_idTorf_users")
   rf_readwriter_list_rf_readwriter_list_rwl_createdby_idTorf_users        rf_readwriter_list[]    @relation("rf_readwriter_list_rwl_createdby_idTorf_users")
   rf_readwriter_list_rf_readwriter_list_rwl_modifiedby_idTorf_users       rf_readwriter_list[]    @relation("rf_readwriter_list_rwl_modifiedby_idTorf_users")
   rf_rfidtag_list_rf_rfidtag_list_rfd_createdby_idTorf_users              rf_rfidtag_list[]       @relation("rf_rfidtag_list_rfd_createdby_idTorf_users")
@@ -426,4 +439,69 @@ model sysdiagrams {
   definition   Bytes?
 
   @@unique([principal_id, name], map: "UK_principal_name")
+}
+
+model rf_division {
+  rdv_div_id                                       Int                @id(map: "PK_rf_division") @default(autoincrement()) @db.SmallInt
+  rdv_div_name                                     String?            @db.NVarChar(20)
+  rdv_createdby_id                                 String?            @db.UniqueIdentifier
+  rdv_created_date                                 DateTime?          @db.DateTime
+  rdv_modifiedby_id                                String?            @db.UniqueIdentifier
+  rdv_modified_date                                DateTime?          @db.DateTime
+  rfd_deleted                                      Boolean?
+  rf_users_rf_division_rdv_createdby_idTorf_users  rf_users?          @relation("rf_division_rdv_createdby_idTorf_users", fields: [rdv_createdby_id], references: [rsr_user_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_division_rf_users")
+  rf_users_rf_division_rdv_modifiedby_idTorf_users rf_users?          @relation("rf_division_rdv_modifiedby_idTorf_users", fields: [rdv_modifiedby_id], references: [rsr_user_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_division_rf_users1")
+  rf_employee_list                                 rf_employee_list[]
+
+  @@index([rdv_div_id, rdv_createdby_id, rdv_modifiedby_id, rfd_deleted], map: "IX_rf_division")
+  @@index([rdv_div_name], map: "IX_rf_division_1")
+}
+
+model rf_position {
+  rfp_pos_id                                       Int                @id(map: "PK_rf_position") @default(autoincrement()) @db.TinyInt
+  rfp_pos_name                                     String?            @db.NVarChar(20)
+  rfp_createdby_id                                 String?            @db.UniqueIdentifier
+  rfp_created_date                                 DateTime?          @db.DateTime
+  rfp_modifiedby_id                                String?            @db.UniqueIdentifier
+  rfp_modified_date                                DateTime?          @db.DateTime
+  rfp_deleted                                      Boolean?
+  rf_employee_list                                 rf_employee_list[]
+  rf_users_rf_position_rfp_createdby_idTorf_users  rf_users?          @relation("rf_position_rfp_createdby_idTorf_users", fields: [rfp_createdby_id], references: [rsr_user_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_position_rf_users")
+  rf_users_rf_position_rfp_modifiedby_idTorf_users rf_users?          @relation("rf_position_rfp_modifiedby_idTorf_users", fields: [rfp_modifiedby_id], references: [rsr_user_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_position_rf_users1")
+
+  @@index([rfp_pos_id, rfp_createdby_id, rfp_modifiedby_id, rfp_deleted], map: "IX_rf_position")
+  @@index([rfp_pos_name], map: "IX_rf_position_1")
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+model rf_temp_employee {
+  temp_gid   String? @db.NVarChar(20)
+  temp_name  String? @db.NVarChar(50)
+  temp_proc  String? @db.NVarChar(20)
+  temp_bldg  String? @db.NVarChar(10)
+  temp_shift String? @db.NVarChar(10)
+  temp_div   String? @db.NVarChar(10)
+  temp_pos   String? @db.NVarChar(10)
+
+  @@index([temp_gid, temp_bldg, temp_div, temp_name, temp_pos, temp_proc, temp_shift], map: "IX_rf_temp_employee")
+  @@ignore
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+model rf_temp_employee_leave {
+  temp_gid       String?   @db.NVarChar(20)
+  temp_leavetype Int?      @db.SmallInt
+  temp_leavedate DateTime? @db.Date
+  temp_team      String?   @db.NVarChar(10)
+
+  @@ignore
+}
+
+model rf_temp_employee_logs {
+  rtl_id          Int       @id(map: "PK_rf_temp_employee_logs") @default(autoincrement())
+  rtl_result      String?   @db.NVarChar(Max)
+  rtl_create_date DateTime? @db.DateTime
+  rtl_gid         String?   @db.NVarChar(20)
+
+  @@index([rtl_gid], map: "IX_rf_temp_employee_logs")
 }
