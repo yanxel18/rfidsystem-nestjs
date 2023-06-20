@@ -4,31 +4,31 @@ import { IsNotEmpty, IsUUID, MaxLength, ValidateIf } from 'class-validator';
 @ArgsType()
 export class EmployeeBoardArgs {
   @Field({ nullable: true })
-  search: string;
+  readonly search: string;
 
   @Field((type) => Int, { nullable: true })
-  areaID: number;
+  readonly areaID: number;
 
   @Field((type) => Int, { nullable: true })
-  teamID: number;
+  readonly teamID: number;
 
   @Field((type) => Int, { nullable: true })
-  locID: number;
+  readonly locID: number;
 
   @Field((type) => Int, { nullable: true })
-  posID: number;
+  readonly posID: number;
 
   @Field((type) => Int, { nullable: true })
-  divID: number;
+  readonly divID: number;
 
   @Field((type) => Int, { nullable: true })
-  pageoffset: number;
+  readonly pageoffset: number;
 
   @Field((type) => Int, { nullable: true })
-  pagenum: number;
+  readonly pagenum: number;
 
   @Field((type) => Int, { nullable: true })
-  order: number;
+  readonly order: number;
 }
 @ArgsType()
 export class CommentArgs {
@@ -36,10 +36,10 @@ export class CommentArgs {
   @MaxLength(36, { message: 'EmpID value is too long!' })
   @IsUUID('all', { each: true, message: 'EmpID is not a valid format!' })
   @Field((type) => String)
-  empID: string;
+  readonly empID: string;
 
   @MaxLength(20, { message: 'Comments should not exceed 20 characters!' })
   @ValidateIf((_object, value) => value !== null)
   @Field((type) => String, { nullable: true })
-  comment: string;
+  readonly comment: string;
 }
