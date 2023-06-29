@@ -4,7 +4,7 @@ import {
   IEmployeeBoardArgs,
   IViewEmployeeBoard,
 } from 'src/model/viewModel/viewTableModel';
-@Injectable()
+
 export class PayloadFilter {
   /**
    *

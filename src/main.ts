@@ -34,8 +34,14 @@ async function initializeSystem() {
   appConfig.set('etag', false);
   appConfig.set('json spaces', 2);
   const prismaService = app.get(PrismaService);
-  app.use(helmet());
-  app.useGlobalPipes(new ValidationPipe());
+  if (process.env.NODE_ENV === 'production') app.use(helmet());
+
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+      transform: true,
+    }),
+  );
   await prismaService.enableShutdownHooks(app);
   await app.listen(process.env.PORT);
 }
