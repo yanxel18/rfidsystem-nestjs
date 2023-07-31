@@ -4,32 +4,33 @@ import { IsNotEmpty, IsUUID, MaxLength, ValidateIf } from 'class-validator';
 @ArgsType()
 export class EmployeeBoardArgs {
   @Field({ nullable: true })
-  readonly search: string;
+  readonly search?: string;
 
   @Field((type) => Int, { nullable: true })
-  readonly areaID: number;
+  readonly areaID?: number;
 
   @Field((type) => Int, { nullable: true })
-  readonly teamID: number;
+  readonly teamID?: number;
 
   @Field((type) => Int, { nullable: true })
-  readonly locID: number;
+  readonly locID?: number;
 
   @Field((type) => Int, { nullable: true })
-  readonly posID: number;
+  readonly posID?: number;
 
   @Field((type) => Int, { nullable: true })
-  readonly divID: number;
+  readonly divID?: number;
 
   @Field((type) => Int, { nullable: true })
-  readonly pageoffset: number;
+  readonly pageoffset?: number;
 
   @Field((type) => Int, { nullable: true })
-  readonly pagenum: number;
+  readonly pagenum?: number;
 
   @Field((type) => Int, { nullable: true })
-  readonly order: number;
+  readonly order?: number;
 }
+
 @ArgsType()
 export class CommentArgs {
   @IsNotEmpty({ message: 'Employee ID must not be empty' })
@@ -41,5 +42,5 @@ export class CommentArgs {
   @MaxLength(20, { message: 'Comments should not exceed 20 characters!' })
   @ValidateIf((_object, value) => value !== null)
   @Field((type) => String, { nullable: true })
-  readonly comment: string;
+  readonly comment?: string;
 }
