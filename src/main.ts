@@ -57,7 +57,7 @@ async function initializeSystem() {
       transform: true,
     }),
   );
-  await prismaService.enableShutdownHooks(app);
+  await app.enableShutdownHooks();
   await app.listen(process.env.PORT);
 }
 bootstrap();
