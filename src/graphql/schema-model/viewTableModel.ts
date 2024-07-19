@@ -38,3 +38,60 @@ export class OPerAreaGraph {
   @Field((type) => Float, { nullable: true })
   WorkerRate: number | null;
 }
+
+@ObjectType()
+export class OAttendanceTable {
+  @Field((type) => Int, { nullable: true })
+  divID: number | null;
+
+  @Field({ nullable: true })
+  divName: string | null;
+
+  @Field((type) => Int, { nullable: true })
+  kakariID: number | null;
+
+  @Field({ nullable: true })
+  kakariDesc: string | null;
+
+  @Field((type) => Int, { nullable: true })
+  koutaiInCount: number | null;
+
+  @Field((type) => Int, { nullable: true })
+  koutaiTotalCount: number | null;
+
+  @Field((type) => Int, { nullable: true })
+  koutaiPercent: number | null;
+
+  @Field((type) => Int, { nullable: true })
+  dayShiftInCount: number | null;
+
+  @Field((type) => Int, { nullable: true })
+  dayShiftTotalCount: number | null;
+
+  @Field((type) => Int, { nullable: true })
+  dayShiftPercent: number | null;
+
+  @Field((type) => Int, { nullable: true })
+  normalShiftInCount: number | null;
+
+  @Field((type) => Int, { nullable: true })
+  normalShiftTotalCount: number | null;
+
+  @Field((type) => Int)
+  normalShiftPercent: number;
+}
+
+@ObjectType()
+export class OAttendanceTotal {
+  @Field((type) => Int, { nullable: true })
+  workerInTotal: number | null;
+
+  @Field((type) => Int, { nullable: true })
+  workerAllTotal: number | null;
+
+  @Field((type) => Int, { nullable: true })
+  workerInPercent: number | null;
+
+  @Field({ nullable: true })
+  totalTeamName: string | null;
+}

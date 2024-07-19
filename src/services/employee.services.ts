@@ -1,41 +1,38 @@
-import {
-  BadRequestException,
-  Injectable,
-  InternalServerErrorException,
-  CACHE_MANAGER,
-  Inject,
-} from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { Args } from '@nestjs/graphql';
 import { Prisma } from '@prisma/client';
 import { PrismaErrorCode } from 'src/errcode/errorcode';
 import { CommentArgs } from 'src/graphql/args/employee.args';
 import {
   IPayloadEmployeeBoardWithRatio,
-  IReponseComment,
+  IStatusResponse,
   IViewEmployeeBoard,
 } from 'src/model/viewModel/viewTableModel';
 import { PrismaService } from 'src/prisma.service';
-import { Cache } from 'cache-manager';
 import { PubSub } from 'graphql-subscriptions';
+import { Redis } from 'ioredis';
+import { InjectRedis } from '@nestjs-modules/ioredis';
 @Injectable()
 export class EmployeeService {
   pubSub = new PubSub();
   constructor(
     private prisma: PrismaService,
-    @Inject(CACHE_MANAGER) private cache: Cache,
+    @InjectRedis() private redis: Redis,
   ) {}
 
-  async EmployeeBoardAll(): Promise<void> {
+  EmployeeBoardAll(): void {
     /**
      * this interval queries in the database every 1second to the view_employee_board
      * and store it in the cache memory with retention period of 5 seconds.
      */
-    setInterval(async () => {
-      const returndata: IPayloadEmployeeBoardWithRatio = {
-        EmployeeBoardAllSub: await this.employee_list(),
-        AreaRatio: null, //do something !! if already query then loop! or delay?!
-      };
-      this.cache.set('employeeAllView', returndata, 5000);
+    setInterval(() => {
+      this.employee_list().then((data) => {
+        const returndata: IPayloadEmployeeBoardWithRatio = {
+          EmployeeBoardAllSub: data,
+          AreaRatio: null, //do something !! if already query then loop! or delay?!
+        };
+        this.redis.set('employeeAllView', JSON.stringify(returndata));
+      });
     }, 1000);
   }
   /**
@@ -45,9 +42,11 @@ export class EmployeeService {
    */
   async employee_list(): Promise<IViewEmployeeBoard[]> {
     try {
-      return await this.prisma.$queryRaw<
-        IViewEmployeeBoard[]
-      >`select * from view_employee_board order by empArea`;
+      return await this.prisma.view_employee_board.findMany({
+        orderBy: {
+          empArea: 'asc',
+        },
+      });
     } catch (err) {
       if (err instanceof Prisma.PrismaClientKnownRequestError) {
         if (err.code === PrismaErrorCode.P2010) {
@@ -67,26 +66,19 @@ export class EmployeeService {
    */
   async updateEmployeeComment(
     @Args() param: CommentArgs,
-  ): Promise<IReponseComment> {
-    const notAllowed: string[] = ['-', 'ー'];
-    const stringReg = /^[a-zA-Z0-9]+$/i;
+  ): Promise<IStatusResponse> {
     try {
       if (typeof param.comment === 'string') {
-        if (
-          notAllowed.some((str) => param.comment.includes(str)) &&
-          param.comment.length > 1 &&
-          !stringReg.test(param.comment)
-        ) {
-          param = {
-            ...param,
-            comment: null,
-          };
-        } else {
-          param = {
-            ...param,
-            comment: param.comment.trim(),
-          };
-        }
+        param =
+          param.comment == '-' || param.comment == 'ー'
+            ? {
+                ...param,
+                comment: null,
+              }
+            : {
+                ...param,
+                comment: param.comment.trim(),
+              };
       }
       const result = await this.prisma.$executeRaw<any>`
       EXEC sp_update_comment

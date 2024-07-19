@@ -1,5 +1,5 @@
-import { Controller } from '@nestjs/common';
-import { EmployeeService } from './services/employee.services';
+import { Controller, Get } from '@nestjs/common';
+import { EmployeeService } from '@services/employee.services';
 
 @Controller()
 export class AppController {
@@ -10,5 +10,13 @@ export class AppController {
     private employeeService: EmployeeService,
   ) {
     employeeService.EmployeeBoardAll();
+  }
+
+  @Get()
+  healthCheck() {
+    return {
+      message: 'Unauthorized to use this API!',
+      statusCode: 200,
+    };
   }
 }

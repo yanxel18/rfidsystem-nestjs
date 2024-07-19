@@ -6,20 +6,20 @@ export class EmployeeBoardArgs {
   @Field({ nullable: true })
   readonly search?: string;
 
-  @Field((type) => Int, { nullable: true })
-  readonly areaID?: number;
+  @Field((type) => [Int], { nullable: 'items' })
+  readonly areaID?: number[];
 
-  @Field((type) => Int, { nullable: true })
-  readonly teamID?: number;
+  @Field((type) => [Int], { nullable: 'items' })
+  readonly teamID?: number[];
 
-  @Field((type) => Int, { nullable: true })
-  readonly locID?: number;
+  @Field((type) => [Int], { nullable: 'items' })
+  readonly locID?: number[];
 
-  @Field((type) => Int, { nullable: true })
-  readonly posID?: number;
+  @Field((type) => [Int], { nullable: 'items' })
+  readonly posID?: number[];
 
-  @Field((type) => Int, { nullable: true })
-  readonly divID?: number;
+  @Field((type) => [Int], { nullable: 'items' })
+  readonly divID?: number[];
 
   @Field((type) => Int, { nullable: true })
   readonly pageoffset?: number;
@@ -29,6 +29,9 @@ export class EmployeeBoardArgs {
 
   @Field((type) => Int, { nullable: true })
   readonly order?: number;
+
+  @Field((type) => [Int], { nullable: 'items' })
+  readonly kakariID?: number[];
 }
 
 @ArgsType()

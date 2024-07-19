@@ -85,6 +85,15 @@ export class EmployeeBoard {
 
   @Field((type) => Int, { nullable: true })
   statusOrder: number;
+
+  @Field((type) => Int, { nullable: true })
+  kakariID: number | null;
+
+  @Field({ nullable: true })
+  kakariDesc: string;
+
+  @Field((type) => Int, { nullable: true })
+  onShift: number;
 }
 
 @ObjectType()
@@ -96,7 +105,16 @@ export class EmployeeCountRatio {
   currentWorkerCount: number;
 
   @Field({ nullable: true })
+  currentWorkerLessAwol: number;
+
+  @Field({ nullable: true })
   totalWorkerCount: number;
+
+  @Field({ nullable: true })
+  currentPercentWithAwol: string;
+
+  @Field({ nullable: true })
+  currentWorkerOnShift: number;
 }
 
 @ObjectType()
@@ -115,7 +133,7 @@ export class EmployeeBoardCount {
 }
 
 @ObjectType()
-export class EmployeeCommentResponse {
+export class StatusResponse {
   @Field({ nullable: true })
   status: string;
 }

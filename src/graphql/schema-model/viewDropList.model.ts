@@ -46,6 +46,14 @@ export class ODivList {
 }
 
 @ObjectType()
+export class OKakariList {
+  @Field((type) => Int)
+  kakariID: number;
+
+  @Field({ nullable: true })
+  kakariDesc: string;
+}
+@ObjectType()
 export class OViewDropList {
   @Field((type) => [OAreaList], { nullable: true, defaultValue: [] })
   IAreaList: OAreaList[];
@@ -61,6 +69,9 @@ export class OViewDropList {
 
   @Field((type) => [ODivList], { nullable: true, defaultValue: [] })
   IDivisionList: ODivList[];
+
+  @Field((type) => [OKakariList], { nullable: true, defaultValue: [] })
+  IKakariList: OKakariList[];
 }
 
 @ObjectType()

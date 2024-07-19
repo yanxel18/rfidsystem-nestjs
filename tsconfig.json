@@ -8,6 +8,17 @@
     "allowSyntheticDefaultImports": true,
     "target": "es2017",
     "sourceMap": true,
+    "paths": {
+      "@services/*":[
+        "src/services/*"
+      ],
+      "@schemaModels/*":[
+        "src/graphql/schema-model/*"
+      ],
+      "@viewModels/*":[
+        "src/model/viewModel/*"
+      ],
+    },
     "outDir": "./dist",
     "baseUrl": "./",
     "incremental": true,
@@ -20,3 +31,4 @@
     "esModuleInterop": true
   }
 }
+

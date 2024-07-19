@@ -16,7 +16,7 @@ export function stringTrimDirective(
       if (stringDirective) {
         const { resolve = defaultFieldResolver } = fieldConfig;
         fieldConfig.resolve = async function (source, args, context, info) {
-          const result = await resolve(source, args, context, info);
+          const result = resolve(source, args, context, info);
           if (typeof result === 'string') {
             return result.trim();
           }

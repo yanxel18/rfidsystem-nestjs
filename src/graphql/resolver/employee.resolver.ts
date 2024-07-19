@@ -9,39 +9,44 @@ import {
 } from '@nestjs/graphql';
 import {
   EmployeeBoardAllSub,
-  EmployeeCommentResponse,
-} from '../schema-model/viewEmployee.model';
+  StatusResponse,
+} from '@schemaModels/viewEmployee.model';
 import {
   IEmployeeBoardArgs,
   IPayloadEmployeeBoardWithRatio,
-  IReponseComment,
-} from 'src/model/viewModel/viewTableModel';
-import { Cache } from 'cache-manager';
-import { CACHE_MANAGER, Inject } from '@nestjs/common';
+  IStatusResponse,
+} from '@viewModels/viewTableModel';
+import { OnModuleInit } from '@nestjs/common';
 import { CommentArgs, EmployeeBoardArgs } from '../args/employee.args';
 import { PubSub } from 'graphql-subscriptions';
-import { EmployeeService } from 'src/services/employee.services';
-import { PayloadFilter } from 'src/services/filterpayload';
+import { EmployeeService } from '@services/employee.services';
+import { PayloadFilter } from '@services/filterpayload';
+import { InjectRedis } from '@nestjs-modules/ioredis';
+import Redis from 'ioredis';
 
 @Resolver(() => EmployeeBoardAllSub)
-export class EmpResolver {
+export class EmpResolver implements OnModuleInit {
   pubSub = new PubSub();
   constructor(
     private readonly employeeService: EmployeeService,
-    @Inject(CACHE_MANAGER)
-    private cache: Cache,
-  ) {
-    /**
-     * this interval per 1 second queries on the cache memory to be broadcast on 'employeeAllViewx'
-     * topic to be received by subscribing clients.
-     * If the client subscribes to EmployeeBoardAllSub subscription, this is the data that will be published.
-     */
-    setInterval(async () => {
-      const cacheData: IPayloadEmployeeBoardWithRatio = await this.cache.get(
-        'employeeAllView',
-      );
-      this.pubSub.publish('employeeAllViewx', cacheData);
+    @InjectRedis() private redis: Redis,
+  ) {}
+  /**
+   * this interval per 1 second queries on the cache memory to be broadcast on 'employeeAllViewx'
+   * topic to be received by subscribing clients.
+   * If the client subscribes to EmployeeBoardAllSub subscription, this is the data that will be published.
+   * Publish data every 1000ms or 1 second is recommended.
+   */
+  async onModuleInit(): Promise<void> {
+    setInterval(() => {
+      this.initializeEmployeeData();
     }, 1000);
+  }
+
+  initializeEmployeeData(): void {
+    this.redis.get('employeeAllView').then((data) => {
+      this.pubSub.publish('employeeAllViewx', JSON.parse(data));
+    });
   }
   /**
    *
@@ -53,8 +58,8 @@ export class EmpResolver {
   async EmpBoardMaxCountFilter(
     @Args() args: EmployeeBoardArgs,
   ): Promise<number> {
-    const cacheData: IPayloadEmployeeBoardWithRatio = await this.cache.get(
-      'employeeAllView',
+    const cacheData: IPayloadEmployeeBoardWithRatio = JSON.parse(
+      await this.redis.get('employeeAllView'),
     );
     return cacheData
       ? PayloadFilter.payloadFilter(cacheData, args).EmployeeBoardAllSub.length
@@ -101,10 +106,10 @@ export class EmpResolver {
    * @returns nothing
    * This mutation inserts or update a comment section on the board per worker id.
    */
-  @Mutation((_returns) => EmployeeCommentResponse, { nullable: true })
+  @Mutation((_returns) => StatusResponse, { nullable: true })
   async UpdateEmployeeComment(
     @Args() args: CommentArgs,
-  ): Promise<IReponseComment> {
+  ): Promise<IStatusResponse> {
     return await this.employeeService.updateEmployeeComment(args);
   }
 }

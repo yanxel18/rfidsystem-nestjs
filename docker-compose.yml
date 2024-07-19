@@ -1,0 +1,95 @@
+services:
+  redis:
+    container_name: redis
+    image: redis
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: always
+    environment:
+      TZ: Asia/Tokyo
+    networks:
+      - back-tier
+    volumes:
+      - redis-data:/data
+
+  # angular:
+  #   container_name: rfidsystem-angular
+  #   build:
+  #     context: ../rfidsystem-angular/.
+  #     dockerfile: ./dockerfile
+  #   image: rfidsystem-angular-image
+  #   healthcheck:
+  #     test: ['CMD', 'curl', '-f', 'http://localhost:4210']
+  #     interval: 10s
+  #     timeout: 5s
+  #     retries: 5
+  #   restart: always
+  #   ports:
+  #     - '4210:4210'
+  #   depends_on:
+  #     - nestjs
+  #   environment:
+  #     TZ: Asia/Tokyo
+  #   networks:
+  #     - front-tier
+
+  nestjs:
+    container_name: rfidsystem-nestjs
+    build:
+      context: .
+      dockerfile: ./dockerfile
+      args:
+        PROXY_URL: ${PROXY_URL}
+    image: rfidsystem-nestjs-image
+    restart: always
+    ports:
+      - '3100:3100'
+    environment:
+      - NODE_ENV=${NODE_ENV}
+      - PORT=${PORT}
+      - DATABASE_URL=${DATABASE_URL}
+      - REDIS_SERVER=${REDIS_SERVER}
+      - SERVER_URL=${SERVER_URL}
+      - EMAIL_WEBLINK_KETSU=${EMAIL_WEBLINK_KETSU}
+      - EMAIL_FROM=${EMAIL_FROM}
+      - EMAIL_PORT=${EMAIL_PORT}
+      - EMAIL_SERVER=${EMAIL_SERVER}
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://localhost:3100/health']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    depends_on:
+      redis:
+        condition: service_healthy
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+    networks:
+      - front-tier
+      - back-tier
+
+volumes:
+  rfid-nestjs-vol:
+  redis-data:
+
+networks:
+  front-tier:
+    name: rfid-frontend-network
+    ipam:
+      config:
+        - subnet: 172.100.10.0/29
+          ip_range: 172.100.10.0/29
+          gateway: 172.100.10.1
+
+  back-tier:
+    name: rfid-backend-network
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.200.20.0/29
+          ip_range: 172.200.20.0/29
+          gateway: 172.200.20.1

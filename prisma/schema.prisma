@@ -1,5 +1,6 @@
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["views"]
 }
 
 datasource db {
@@ -33,12 +34,29 @@ model rf_area_list {
   rfd_modified_date                                 DateTime?            @db.DateTime
   rfa_deleted                                       Boolean?
   rfa_deptarea_flag                                 Boolean?
+  rfa_order                                         Int?                 @db.SmallInt
   rf_status                                         rf_status?           @relation(fields: [rfa_status_id], references: [rf_status_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_area_list_rf_status")
   rf_users_rf_area_list_rfa_createdby_idTorf_users  rf_users?            @relation("rf_area_list_rfa_createdby_idTorf_users", fields: [rfa_createdby_id], references: [rsr_user_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_area_list_rf_users")
   rf_users_rf_area_list_rfa_modifiedby_idTorf_users rf_users?            @relation("rf_area_list_rfa_modifiedby_idTorf_users", fields: [rfa_modifiedby_id], references: [rsr_user_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_area_list_rf_users1")
   rf_readwriter_list                                rf_readwriter_list[]
 
-  @@index([rfa_area_id, rfa_status_id, rfa_deleted, rfa_deptarea_flag], map: "IX_rf_area_list")
+  @@index([rfa_area_id, rfa_status_id, rfa_deleted, rfa_deptarea_flag, rfa_order], map: "IX_rf_area_list")
+}
+
+model rf_division {
+  rdv_div_id                                       Int                @id(map: "PK_rf_division") @default(autoincrement()) @db.SmallInt
+  rdv_div_name                                     String?            @db.NVarChar(20)
+  rdv_createdby_id                                 String?            @db.UniqueIdentifier
+  rdv_created_date                                 DateTime?          @db.DateTime
+  rdv_modifiedby_id                                String?            @db.UniqueIdentifier
+  rdv_modified_date                                DateTime?          @db.DateTime
+  rfd_deleted                                      Boolean?
+  rf_users_rf_division_rdv_createdby_idTorf_users  rf_users?          @relation("rf_division_rdv_createdby_idTorf_users", fields: [rdv_createdby_id], references: [rsr_user_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_division_rf_users")
+  rf_users_rf_division_rdv_modifiedby_idTorf_users rf_users?          @relation("rf_division_rdv_modifiedby_idTorf_users", fields: [rdv_modifiedby_id], references: [rsr_user_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_division_rf_users1")
+  rf_employee_list                                 rf_employee_list[]
+
+  @@index([rdv_div_id, rdv_createdby_id, rdv_modifiedby_id, rfd_deleted], map: "IX_rf_division")
+  @@index([rdv_div_name], map: "IX_rf_division_1")
 }
 
 model rf_employee_bldglist {
@@ -72,6 +90,8 @@ model rf_employee_board {
   rbe_leave_type                                         Int?                @db.TinyInt
   rbe_leave_start                                        DateTime?           @db.DateTime
   rbe_leave_end                                          DateTime?           @db.DateTime
+  rbe_inout                                              Int?                @db.TinyInt
+  rbe_status_update_date                                 DateTime?           @db.DateTime
   rf_employee_list                                       rf_employee_list?   @relation(fields: [rbe_emp_id], references: [rfe_emp_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_employee_board_rf_employee_list")
   rf_readwriter_list                                     rf_readwriter_list? @relation(fields: [rbe_rwl_id], references: [rwl_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_employee_board_rf_readwriter_list")
   rf_rfidtag_list                                        rf_rfidtag_list?    @relation(fields: [rbe_taginfo_id], references: [rfd_taginfo_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_employee_board_rf_rfidtag_list")
@@ -79,48 +99,70 @@ model rf_employee_board {
   rf_users_rf_employee_board_rbe_createdby_idTorf_users  rf_users?           @relation("rf_employee_board_rbe_createdby_idTorf_users", fields: [rbe_createdby_id], references: [rsr_user_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_employee_board_rf_users")
   rf_users_rf_employee_board_rbe_modifiedby_idTorf_users rf_users?           @relation("rf_employee_board_rbe_modifiedby_idTorf_users", fields: [rbe_modifiedby_id], references: [rsr_user_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_employee_board_rf_users1")
 
-  @@index([rbe_id, rbe_emp_id, rbe_taginfo_id, rbe_rwl_id, rbe_comment, rbe_delete, rbe_status_id, rbe_leave_end, rbe_leave_start, rbe_leave_type, rbe_lastupdate_date], map: "IX_rf_employee_board")
-  @@index([rbe_id, rbe_emp_id, rbe_rwl_id, rbe_taginfo_id], map: "IX_rf_employee_board_1")
-  @@index([rbe_id, rbe_emp_id], map: "IX_rf_employee_board_2")
+  @@index([rbe_id, rbe_emp_id, rbe_taginfo_id, rbe_rwl_id, rbe_comment, rbe_delete, rbe_status_id, rbe_leave_end, rbe_leave_start, rbe_leave_type, rbe_lastupdate_date, rbe_inout], map: "IX_rf_employee_board")
+  @@index([rbe_id, rbe_emp_id, rbe_rwl_id, rbe_taginfo_id, rbe_status_update_date], map: "IX_rf_employee_board_1")
+  @@index([rbe_id, rbe_emp_id, rbe_status_update_date], map: "IX_rf_employee_board_2")
+  @@index([rbe_emp_id, rbe_inout, rbe_status_update_date], map: "IX_rf_employee_board_3")
+  @@index([rbe_delete], map: "IX_rf_employee_board_4")
+  @@index([rbe_delete, rbe_status_id], map: "IX_rf_employee_board_5")
 }
 
 model rf_employee_list {
-  rfe_emp_id                                            String                      @id(map: "PK_rf_employee") @default(dbgenerated("newid()"), map: "DF_rf_employee_rfe_emp_id") @db.UniqueIdentifier
-  rfe_gid                                               String?                     @db.NVarChar(20)
-  rfe_fname                                             String?                     @db.NVarChar(50)
-  rfe_lname                                             String?                     @db.NVarChar(50)
-  rfe_displayname                                       String?                     @db.NVarChar(100)
-  rfe_gender_id                                         Int?                        @db.TinyInt
-  rfe_emp_process_id                                    Int?                        @db.SmallInt
-  rfe_emp_team_id                                       Int?                        @db.TinyInt
-  rfe_emp_bldg_id                                       Int?                        @db.SmallInt
-  rfe_createdby_id                                      String?                     @db.UniqueIdentifier
-  rfe_created_date                                      DateTime?                   @db.DateTime
-  rfe_modifiedby_id                                     String?                     @db.UniqueIdentifier
-  rfe_active                                            Boolean?
-  rfe_deleted                                           Boolean?
-  rfe_emp_rw_id                                         Int?
-  rfe_gid_card                                          String?                     @db.NVarChar(20)
-  rfe_pos_id                                            Int?                        @db.TinyInt
-  rfe_div_id                                            Int?                        @db.SmallInt
-  rfe_modified_date                                     DateTime?                   @db.DateTime
-  rf_employee_board                                     rf_employee_board[]
-  rf_division                                           rf_division?                @relation(fields: [rfe_div_id], references: [rdv_div_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_employee_list_rf_division")
-  rf_employee_bldglist                                  rf_employee_bldglist?       @relation(fields: [rfe_emp_bldg_id], references: [rwa_empbldg_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_employee_list_rf_employee_bldglist")
-  rf_employee_proclist                                  rf_employee_proclist?       @relation(fields: [rfe_emp_process_id], references: [rwp_empprocess_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_employee_list_rf_employee_proclist")
-  rf_employee_teamlist                                  rf_employee_teamlist?       @relation(fields: [rfe_emp_team_id], references: [rte_empteam_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_employee_list_rf_employee_teamlist")
-  rf_gender                                             rf_gender?                  @relation(fields: [rfe_gender_id], references: [rfg_gender_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_employee_list_rf_gender")
-  rf_position                                           rf_position?                @relation(fields: [rfe_pos_id], references: [rfp_pos_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_employee_list_rf_position")
-  rf_readwriter_list                                    rf_readwriter_list?         @relation(fields: [rfe_emp_rw_id], references: [rwl_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_employee_list_rf_readwriter_list")
-  rf_users_rf_employee_list_rfe_createdby_idTorf_users  rf_users?                   @relation("rf_employee_list_rfe_createdby_idTorf_users", fields: [rfe_createdby_id], references: [rsr_user_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_employee_list_rf_users")
-  rf_users_rf_employee_list_rfe_modifiedby_idTorf_users rf_users?                   @relation("rf_employee_list_rfe_modifiedby_idTorf_users", fields: [rfe_modifiedby_id], references: [rsr_user_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_employee_list_rf_users1")
-  rf_employee_logs                                      rf_employee_logs[]
-  rf_employee_logs_detailed                             rf_employee_logs_detailed[]
-  rf_rfidtag_list                                       rf_rfidtag_list[]
+  rfe_emp_id                                                         String                      @id(map: "PK_rf_employee") @default(dbgenerated("newid()"), map: "DF_rf_employee_rfe_emp_id") @db.UniqueIdentifier
+  rfe_gid                                                            String?                     @db.NVarChar(20)
+  rfe_fname                                                          String?                     @db.NVarChar(50)
+  rfe_lname                                                          String?                     @db.NVarChar(50)
+  rfe_displayname                                                    String?                     @db.NVarChar(100)
+  rfe_gender_id                                                      Int?                        @db.TinyInt
+  rfe_emp_process_id                                                 Int?                        @db.SmallInt
+  rfe_emp_team_id                                                    Int?                        @db.TinyInt
+  rfe_emp_bldg_id                                                    Int?                        @db.SmallInt
+  rfe_createdby_id                                                   String?                     @db.UniqueIdentifier
+  rfe_created_date                                                   DateTime?                   @db.DateTime
+  rfe_modifiedby_id                                                  String?                     @db.UniqueIdentifier
+  rfe_active                                                         Boolean?
+  rfe_deleted                                                        Boolean?
+  rfe_emp_rw_id                                                      Int?
+  rfe_gid_card                                                       String?                     @db.NVarChar(20)
+  rfe_pos_id                                                         Int?                        @db.TinyInt
+  rfe_div_id                                                         Int?                        @db.SmallInt
+  rfe_modified_date                                                  DateTime?                   @db.DateTime
+  rfe_kakari_id                                                      Int?                        @db.TinyInt
+  rfe_confirm_a_emp_id                                               String?                     @db.UniqueIdentifier
+  rfe_confirm_b_emp_id                                               String?                     @db.UniqueIdentifier
+  rfe_confirm_c_emp_id                                               String?                     @db.UniqueIdentifier
+  rfe_confirm_d_emp_id                                               String?                     @db.UniqueIdentifier
+  rfe_confirm_e_emp_id                                               String?                     @db.UniqueIdentifier
+  rfe_confirm_f_emp_id                                               String?                     @db.UniqueIdentifier
+  rf_employee_board                                                  rf_employee_board[]
+  rf_division                                                        rf_division?                @relation(fields: [rfe_div_id], references: [rdv_div_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_employee_list_rf_division")
+  rf_employee_bldglist                                               rf_employee_bldglist?       @relation(fields: [rfe_emp_bldg_id], references: [rwa_empbldg_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_employee_list_rf_employee_bldglist")
+  rf_employee_proclist                                               rf_employee_proclist?       @relation(fields: [rfe_emp_process_id], references: [rwp_empprocess_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_employee_list_rf_employee_proclist")
+  rf_employee_teamlist                                               rf_employee_teamlist?       @relation(fields: [rfe_emp_team_id], references: [rte_empteam_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_employee_list_rf_employee_teamlist")
+  rf_gender                                                          rf_gender?                  @relation(fields: [rfe_gender_id], references: [rfg_gender_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_employee_list_rf_gender")
+  rf_kakari_list                                                     rf_kakari_list?             @relation(fields: [rfe_kakari_id], references: [rfk_kakari_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_employee_list_rf_kakari_list")
+  rf_position                                                        rf_position?                @relation(fields: [rfe_pos_id], references: [rfp_pos_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_employee_list_rf_position")
+  rf_readwriter_list                                                 rf_readwriter_list?         @relation(fields: [rfe_emp_rw_id], references: [rwl_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_employee_list_rf_readwriter_list")
+  rf_users_rf_employee_list_rfe_createdby_idTorf_users               rf_users?                   @relation("rf_employee_list_rfe_createdby_idTorf_users", fields: [rfe_createdby_id], references: [rsr_user_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_employee_list_rf_users")
+  rf_users_rf_employee_list_rfe_modifiedby_idTorf_users              rf_users?                   @relation("rf_employee_list_rfe_modifiedby_idTorf_users", fields: [rfe_modifiedby_id], references: [rsr_user_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_employee_list_rf_users1")
+  rf_employee_logs                                                   rf_employee_logs[]
+  rf_employee_logs_detailed                                          rf_employee_logs_detailed[]
+  rf_ketsu_logs_rf_ketsu_logs_rkd_confirm_emp_id_aTorf_employee_list rf_ketsu_logs[]             @relation("rf_ketsu_logs_rkd_confirm_emp_id_aTorf_employee_list")
+  rf_ketsu_logs_rf_ketsu_logs_rkd_confirm_emp_id_bTorf_employee_list rf_ketsu_logs[]             @relation("rf_ketsu_logs_rkd_confirm_emp_id_bTorf_employee_list")
+  rf_ketsu_logs_rf_ketsu_logs_rkd_confirm_emp_id_cTorf_employee_list rf_ketsu_logs[]             @relation("rf_ketsu_logs_rkd_confirm_emp_id_cTorf_employee_list")
+  rf_ketsu_logs_rf_ketsu_logs_rkd_confirm_emp_id_dTorf_employee_list rf_ketsu_logs[]             @relation("rf_ketsu_logs_rkd_confirm_emp_id_dTorf_employee_list")
+  rf_ketsu_logs_rf_ketsu_logs_rkd_confirm_emp_id_eTorf_employee_list rf_ketsu_logs[]             @relation("rf_ketsu_logs_rkd_confirm_emp_id_eTorf_employee_list")
+  rf_ketsu_logs_rf_ketsu_logs_rkd_confirm_emp_id_fTorf_employee_list rf_ketsu_logs[]             @relation("rf_ketsu_logs_rkd_confirm_emp_id_fTorf_employee_list")
+  rf_ketsu_logs_rf_ketsu_logs_rkd_checker_emp_idTorf_employee_list   rf_ketsu_logs[]             @relation("rf_ketsu_logs_rkd_checker_emp_idTorf_employee_list")
+  rf_ketsu_logs_rf_ketsu_logs_rkd_emp_idTorf_employee_list           rf_ketsu_logs[]             @relation("rf_ketsu_logs_rkd_emp_idTorf_employee_list")
+  rf_rfidtag_list                                                    rf_rfidtag_list[]
 
-  @@index([rfe_emp_id, rfe_fname, rfe_lname, rfe_displayname, rfe_emp_process_id, rfe_emp_bldg_id, rfe_emp_rw_id, rfe_emp_team_id, rfe_gid, rfe_deleted, rfe_active, rfe_gid_card], map: "IX_rf_employee_list_1")
   @@index([rfe_emp_id, rfe_emp_process_id, rfe_emp_team_id, rfe_deleted, rfe_active, rfe_div_id, rfe_pos_id], map: "IX_rf_employee_list")
+  @@index([rfe_emp_id, rfe_fname, rfe_lname, rfe_displayname, rfe_emp_process_id, rfe_emp_bldg_id, rfe_emp_rw_id, rfe_emp_team_id, rfe_gid, rfe_deleted, rfe_active, rfe_gid_card], map: "IX_rf_employee_list_1")
   @@index([rfe_emp_id, rfe_deleted, rfe_active], map: "IX_rf_employee_list_2")
+  @@index([rfe_emp_id], map: "IX_rf_employee_list_3")
+  @@index([rfe_emp_id, rfe_gid, rfe_confirm_a_emp_id, rfe_confirm_b_emp_id, rfe_confirm_c_emp_id, rfe_confirm_d_emp_id, rfe_confirm_e_emp_id, rfe_confirm_f_emp_id, rfe_kakari_id], map: "IX_rf_employee_list_4")
+  @@index([rfe_displayname, rfe_emp_id, rfe_active, rfe_deleted], map: "IX_rf_employee_list_5")
 }
 
 model rf_employee_logs {
@@ -137,8 +179,35 @@ model rf_employee_logs {
   rf_status          rf_status?          @relation(fields: [rel_status_id], references: [rf_status_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_employee_logs_rf_status")
 
   @@index([rel_id, rel_emp_id, rel_taginfo_id, rel_rwl_id, rel_status_id, rel_datetime], map: "IX_rf_employee_logs")
-  @@index([rel_id, rel_taginfo_id], map: "IX_rf_employee_logs_1")
-  @@index([rel_id, rel_datetime(sort: Desc)], map: "IX_rf_employee_logs_2")
+  @@index([rel_taginfo_id], map: "IX_rf_employee_logs_1")
+  @@index([rel_emp_id, rel_datetime(sort: Desc)], map: "IX_rf_employee_logs_2")
+  @@index([rel_taginfo_id, rel_datetime], map: "IX_rf_employee_logs_3")
+  @@index([rel_taginfo_id, rel_datetime], map: "IX_rf_employee_logs_4")
+  @@index([rel_datetime(sort: Desc)], map: "IX_rf_employee_logs_5")
+}
+
+model rf_employee_logs_detailed {
+  reld_id                                                                             BigInt              @id(map: "PK_rf_employee_logs_detailed") @default(autoincrement())
+  reld_emp_id                                                                         String?             @db.UniqueIdentifier
+  reld_taginfo_id                                                                     String?             @db.NVarChar(50)
+  reld_rwl_id                                                                         Int?
+  reld_datetime                                                                       DateTime?           @db.DateTime
+  reld_status_id                                                                      Int?                @db.TinyInt
+  reld_emp_origrw_id                                                                  Int?
+  reld_autolog_date                                                                   DateTime?           @db.DateTime
+  rf_employee_list                                                                    rf_employee_list?   @relation(fields: [reld_emp_id], references: [rfe_emp_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_employee_logs_detailed_rf_employee_list")
+  rf_readwriter_list_rf_employee_logs_detailed_reld_rwl_idTorf_readwriter_list        rf_readwriter_list? @relation("rf_employee_logs_detailed_reld_rwl_idTorf_readwriter_list", fields: [reld_rwl_id], references: [rwl_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_employee_logs_detailed_rf_readwriter_list")
+  rf_readwriter_list_rf_employee_logs_detailed_reld_emp_origrw_idTorf_readwriter_list rf_readwriter_list? @relation("rf_employee_logs_detailed_reld_emp_origrw_idTorf_readwriter_list", fields: [reld_emp_origrw_id], references: [rwl_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_employee_logs_detailed_rf_readwriter_list1")
+  rf_rfidtag_list                                                                     rf_rfidtag_list?    @relation(fields: [reld_taginfo_id], references: [rfd_taginfo_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_employee_logs_detailed_rf_rfidtag_list")
+  rf_status                                                                           rf_status?          @relation(fields: [reld_status_id], references: [rf_status_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_employee_logs_detailed_rf_status")
+
+  @@index([reld_id, reld_autolog_date, reld_datetime, reld_taginfo_id, reld_rwl_id, reld_status_id, reld_emp_id, reld_emp_origrw_id], map: "IX_rf_employee_logs_detailed")
+  @@index([reld_id, reld_autolog_date], map: "IX_rf_employee_logs_detailed_1")
+  @@index([reld_autolog_date], map: "IX_rf_employee_logs_detailed_2")
+  @@index([reld_autolog_date(sort: Desc), reld_taginfo_id], map: "IX_rf_employee_logs_detailed_3")
+  @@index([reld_emp_origrw_id, reld_rwl_id, reld_emp_id], map: "IX_rf_employee_logs_detailed_4")
+  @@index([reld_emp_origrw_id, reld_autolog_date], map: "IX_rf_employee_logs_detailed_5")
+  @@index([reld_rwl_id, reld_autolog_date], map: "IX_rf_employee_logs_detailed_6")
 }
 
 model rf_employee_proclist {
@@ -152,6 +221,7 @@ model rf_employee_proclist {
   rf_employee_list                                          rf_employee_list[]
   rf_users_rf_employee_proclist_rwp_createdby_idTorf_users  rf_users?          @relation("rf_employee_proclist_rwp_createdby_idTorf_users", fields: [rwp_createdby_id], references: [rsr_user_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_employee_proclist_rf_users")
   rf_users_rf_employee_proclist_rwp_modifiedby_idTorf_users rf_users?          @relation("rf_employee_proclist_rwp_modifiedby_idTorf_users", fields: [rwp_modifiedby_id], references: [rsr_user_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_employee_proclist_rf_users1")
+  rf_ketsu_logs                                             rf_ketsu_logs[]
 
   @@index([rwp_empprocess_id, rwp_deleted], map: "IX_rf_employee_proclist")
   @@index([rwp_process_desc], map: "IX_rf_employee_proclist_1")
@@ -172,6 +242,7 @@ model rf_employee_shiftlist {
   rf_users_rf_employee_shiftlist_rfs_createdby_idTorf_users  rf_users?              @relation("rf_employee_shiftlist_rfs_createdby_idTorf_users", fields: [rfs_createdby_id], references: [rsr_user_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_employee_shiftlist_rf_users")
   rf_users_rf_employee_shiftlist_rfs_modifiedby_idTorf_users rf_users?              @relation("rf_employee_shiftlist_rfs_modifiedby_idTorf_users", fields: [rfs_modifiedby_id], references: [rsr_user_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_employee_shiftlist_rf_users1")
   rf_employee_teamlist                                       rf_employee_teamlist[]
+  rf_ketsu_logs                                              rf_ketsu_logs[]
 }
 
 model rf_employee_teamlist {
@@ -183,12 +254,14 @@ model rf_employee_teamlist {
   rte_modifiedby_id                                         String?                @db.UniqueIdentifier
   rte_modified_date                                         DateTime?              @db.DateTime
   rte_deleted                                               Boolean?
+  rte_order                                                 Int?                   @db.TinyInt
   rf_employee_list                                          rf_employee_list[]
   rf_employee_shiftlist                                     rf_employee_shiftlist? @relation(fields: [rte_empshift_id], references: [rfs_empshift_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_employee_teamlist_rf_employee_shiftlist")
   rf_users_rf_employee_teamlist_rte_modifiedby_idTorf_users rf_users?              @relation("rf_employee_teamlist_rte_modifiedby_idTorf_users", fields: [rte_modifiedby_id], references: [rsr_user_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_employee_teamlist_rf_users")
   rf_users_rf_employee_teamlist_rte_createdby_idTorf_users  rf_users?              @relation("rf_employee_teamlist_rte_createdby_idTorf_users", fields: [rte_createdby_id], references: [rsr_user_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_employee_teamlist_rf_users1")
+  rf_ketsu_logs                                             rf_ketsu_logs[]
 
-  @@index([rte_empteam_id, rte_empshift_id, rte_deleted, rte_empteam_desc], map: "IX_rf_employee_teamlist")
+  @@index([rte_empteam_id, rte_empshift_id, rte_deleted, rte_empteam_desc, rte_order], map: "IX_rf_employee_teamlist")
   @@index([rte_empteam_desc], map: "IX_rf_employee_teamlist_1")
 }
 
@@ -205,6 +278,133 @@ model rf_gender {
   rf_users_rf_gender_rfg_modifiedby_idTorf_users rf_users?          @relation("rf_gender_rfg_modifiedby_idTorf_users", fields: [rfg_modifiedby_id], references: [rsr_user_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_gender_rf_users1")
 
   @@index([rfg_gender_id, rfg_deleted], map: "IX_rf_gender")
+}
+
+model rf_kakari_list {
+  rfk_kakari_id                                       Int                @id(map: "PK_rf_kakari_list") @default(autoincrement()) @db.TinyInt
+  rfk_kakari_desc                                     String?            @db.NVarChar(50)
+  rfk_createdby_id                                    String?            @db.UniqueIdentifier
+  rfk_created_date                                    DateTime?          @db.DateTime
+  rfk_modifiedby_id                                   String?            @db.UniqueIdentifier
+  rfk_modified_date                                   DateTime?          @db.DateTime
+  rfe_deleted                                         Boolean?
+  rf_employee_list                                    rf_employee_list[]
+  rf_users_rf_kakari_list_rfk_createdby_idTorf_users  rf_users?          @relation("rf_kakari_list_rfk_createdby_idTorf_users", fields: [rfk_createdby_id], references: [rsr_user_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_kakari_list_rf_users")
+  rf_users_rf_kakari_list_rfk_modifiedby_idTorf_users rf_users?          @relation("rf_kakari_list_rfk_modifiedby_idTorf_users", fields: [rfk_modifiedby_id], references: [rsr_user_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_kakari_list_rf_users1")
+
+  @@index([rfk_kakari_id, rfk_createdby_id, rfk_modifiedby_id, rfk_kakari_desc], map: "IX_rf_kakari_list")
+}
+
+model rf_ketsu_alert_type_list {
+  rtp_alert_type_id                                             Int             @id(map: "PK_rf_ketsu_alert_type_list_1") @default(autoincrement()) @db.TinyInt
+  rtp_alert_desc                                                String?         @db.NVarChar(50)
+  rtp_createdby_id                                              String?         @db.UniqueIdentifier
+  rtp_created_date                                              DateTime?       @db.DateTime
+  rtp_modifiedby_id                                             String?         @db.UniqueIdentifier
+  rtp_modified_date                                             DateTime?       @db.DateTime
+  rtp_deleted                                                   Boolean?
+  rf_users_rf_ketsu_alert_type_list_rtp_createdby_idTorf_users  rf_users?       @relation("rf_ketsu_alert_type_list_rtp_createdby_idTorf_users", fields: [rtp_createdby_id], references: [rsr_user_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_ketsu_alert_type_list_rf_users")
+  rf_users_rf_ketsu_alert_type_list_rtp_modifiedby_idTorf_users rf_users?       @relation("rf_ketsu_alert_type_list_rtp_modifiedby_idTorf_users", fields: [rtp_modifiedby_id], references: [rsr_user_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_ketsu_alert_type_list_rf_users1")
+  rf_ketsu_logs                                                 rf_ketsu_logs[]
+
+  @@index([rtp_alert_type_id, rtp_createdby_id, rtp_modifiedby_id, rtp_deleted], map: "IX_rf_ketsu_alert_type_list")
+  @@index([rtp_alert_type_id], map: "IX_rf_ketsu_alert_type_list_1")
+}
+
+model rf_ketsu_iscontact_list {
+  rcd_contact_id                                               Int             @id(map: "PK_rf_ketsu_iscontact_list") @default(autoincrement()) @db.TinyInt
+  rcd_contact_desc                                             String?         @db.NVarChar(50)
+  rcd_createdby_id                                             String?         @db.UniqueIdentifier
+  rcd_created_date                                             DateTime?       @db.DateTime
+  rcd_modifiedby_id                                            String?         @db.UniqueIdentifier
+  rcd_modified_date                                            DateTime?       @db.DateTime
+  rcd_deleted                                                  Boolean?
+  rf_users_rf_ketsu_iscontact_list_rcd_createdby_idTorf_users  rf_users?       @relation("rf_ketsu_iscontact_list_rcd_createdby_idTorf_users", fields: [rcd_createdby_id], references: [rsr_user_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_ketsu_iscontact_list_rf_users")
+  rf_users_rf_ketsu_iscontact_list_rcd_modifiedby_idTorf_users rf_users?       @relation("rf_ketsu_iscontact_list_rcd_modifiedby_idTorf_users", fields: [rcd_modifiedby_id], references: [rsr_user_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_ketsu_iscontact_list_rf_users1")
+  rf_ketsu_logs                                                rf_ketsu_logs[]
+
+  @@index([rcd_contact_id, rcd_created_date, rcd_contact_desc, rcd_deleted], map: "IX_rf_ketsu_iscontact_list")
+}
+
+model rf_ketsu_logs {
+  rkd_ketsu_logs_id                                                     String                    @id(map: "PK_rf_employee_ketsu_logs") @db.UniqueIdentifier
+  rkd_alert_type_id                                                     Int?                      @db.TinyInt
+  rkd_empshift_id                                                       Int?                      @db.TinyInt
+  rkd_process_id                                                        Int?                      @db.SmallInt
+  rkd_rwlocation_id                                                     Int?                      @db.TinyInt
+  rkd_empteam_id                                                        Int?                      @db.TinyInt
+  rkd_emp_id                                                            String?                   @db.UniqueIdentifier
+  rkd_confirm_emp_id_a                                                  String?                   @db.UniqueIdentifier
+  rkd_confirm_emp_id_b                                                  String?                   @db.UniqueIdentifier
+  rkd_confirm_emp_id_c                                                  String?                   @db.UniqueIdentifier
+  rkd_confirm_emp_id_d                                                  String?                   @db.UniqueIdentifier
+  rkd_confirm_emp_id_e                                                  String?                   @db.UniqueIdentifier
+  rkd_confirm_emp_id_f                                                  String?                   @db.UniqueIdentifier
+  rkd_checker_emp_id                                                    String?                   @db.UniqueIdentifier
+  rkd_reason_id                                                         Int?                      @db.TinyInt
+  rkd_contact_id                                                        Int?                      @db.TinyInt
+  rkd_created_date                                                      DateTime?                 @db.DateTime
+  rkd_modified_date                                                     DateTime?                 @db.DateTime
+  rkd_deleted                                                           Boolean?
+  rkd_modified_id                                                       String?                   @db.UniqueIdentifier
+  rkd_toshow                                                            Boolean?
+  rkd_shift_date                                                        DateTime?                 @db.DateTime
+  rkd_confirm                                                           Boolean?
+  rf_employee_list_rf_ketsu_logs_rkd_confirm_emp_id_aTorf_employee_list rf_employee_list?         @relation("rf_ketsu_logs_rkd_confirm_emp_id_aTorf_employee_list", fields: [rkd_confirm_emp_id_a], references: [rfe_emp_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_ketsu_logs_rf_employee_list")
+  rf_employee_list_rf_ketsu_logs_rkd_confirm_emp_id_bTorf_employee_list rf_employee_list?         @relation("rf_ketsu_logs_rkd_confirm_emp_id_bTorf_employee_list", fields: [rkd_confirm_emp_id_b], references: [rfe_emp_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_ketsu_logs_rf_employee_list1")
+  rf_employee_list_rf_ketsu_logs_rkd_confirm_emp_id_cTorf_employee_list rf_employee_list?         @relation("rf_ketsu_logs_rkd_confirm_emp_id_cTorf_employee_list", fields: [rkd_confirm_emp_id_c], references: [rfe_emp_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_ketsu_logs_rf_employee_list2")
+  rf_employee_list_rf_ketsu_logs_rkd_confirm_emp_id_dTorf_employee_list rf_employee_list?         @relation("rf_ketsu_logs_rkd_confirm_emp_id_dTorf_employee_list", fields: [rkd_confirm_emp_id_d], references: [rfe_emp_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_ketsu_logs_rf_employee_list3")
+  rf_employee_list_rf_ketsu_logs_rkd_confirm_emp_id_eTorf_employee_list rf_employee_list?         @relation("rf_ketsu_logs_rkd_confirm_emp_id_eTorf_employee_list", fields: [rkd_confirm_emp_id_e], references: [rfe_emp_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_ketsu_logs_rf_employee_list4")
+  rf_employee_list_rf_ketsu_logs_rkd_confirm_emp_id_fTorf_employee_list rf_employee_list?         @relation("rf_ketsu_logs_rkd_confirm_emp_id_fTorf_employee_list", fields: [rkd_confirm_emp_id_f], references: [rfe_emp_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_ketsu_logs_rf_employee_list5")
+  rf_employee_list_rf_ketsu_logs_rkd_checker_emp_idTorf_employee_list   rf_employee_list?         @relation("rf_ketsu_logs_rkd_checker_emp_idTorf_employee_list", fields: [rkd_checker_emp_id], references: [rfe_emp_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_ketsu_logs_rf_employee_list6")
+  rf_employee_list_rf_ketsu_logs_rkd_emp_idTorf_employee_list           rf_employee_list?         @relation("rf_ketsu_logs_rkd_emp_idTorf_employee_list", fields: [rkd_emp_id], references: [rfe_emp_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_ketsu_logs_rf_employee_list7")
+  rf_employee_proclist                                                  rf_employee_proclist?     @relation(fields: [rkd_process_id], references: [rwp_empprocess_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_ketsu_logs_rf_employee_proclist")
+  rf_employee_shiftlist                                                 rf_employee_shiftlist?    @relation(fields: [rkd_empshift_id], references: [rfs_empshift_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_ketsu_logs_rf_employee_shiftlist")
+  rf_employee_teamlist                                                  rf_employee_teamlist?     @relation(fields: [rkd_empteam_id], references: [rte_empteam_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_ketsu_logs_rf_employee_teamlist")
+  rf_ketsu_alert_type_list                                              rf_ketsu_alert_type_list? @relation(fields: [rkd_alert_type_id], references: [rtp_alert_type_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_ketsu_logs_rf_ketsu_alert_type_list")
+  rf_ketsu_iscontact_list                                               rf_ketsu_iscontact_list?  @relation(fields: [rkd_contact_id], references: [rcd_contact_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_ketsu_logs_rf_ketsu_iscontact_list")
+  rf_ketsu_reason_list                                                  rf_ketsu_reason_list?     @relation(fields: [rkd_reason_id], references: [rs_reason_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_ketsu_logs_rf_ketsu_reason_list")
+  rf_rwlocation_list                                                    rf_rwlocation_list?       @relation(fields: [rkd_rwlocation_id], references: [rfb_rw_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_ketsu_logs_rf_rwlocation_list")
+  rf_users                                                              rf_users?                 @relation(fields: [rkd_modified_id], references: [rsr_user_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_ketsu_logs_rf_users")
+
+  @@index([rkd_alert_type_id, rkd_empshift_id, rkd_process_id, rkd_rwlocation_id, rkd_empteam_id, rkd_emp_id, rkd_confirm_emp_id_a, rkd_confirm_emp_id_b, rkd_confirm_emp_id_c, rkd_confirm_emp_id_d, rkd_confirm_emp_id_e, rkd_confirm_emp_id_f, rkd_reason_id, rkd_contact_id, rkd_checker_emp_id, rkd_deleted], map: "IX_rf_ketsu_logs")
+  @@index([rkd_alert_type_id(sort: Desc), rkd_deleted, rkd_reason_id, rkd_contact_id, rkd_created_date(sort: Desc), rkd_modified_id, rkd_toshow, rkd_shift_date, rkd_confirm], map: "IX_rf_ketsu_logs_1")
+  @@index([rkd_created_date(sort: Desc), rkd_toshow, rkd_ketsu_logs_id, rkd_shift_date, rkd_confirm], map: "IX_rf_ketsu_logs_2")
+}
+
+model rf_ketsu_reason_list {
+  rs_reason_id                                             Int                 @id(map: "PK_rf_ketsu_reason_list") @default(autoincrement()) @db.TinyInt
+  rs_reason_desc                                           String?             @db.NVarChar(50)
+  rs_createdby_id                                          String?             @db.UniqueIdentifier
+  rs_created_date                                          DateTime?           @db.DateTime
+  rs_modifiedby_id                                         String?             @db.UniqueIdentifier
+  rs_modified_date                                         DateTime?           @db.DateTime
+  rs_deleted                                               Boolean?
+  rs_status_id                                             Int?                @db.TinyInt
+  rs_rwl_id                                                Int?
+  rf_ketsu_logs                                            rf_ketsu_logs[]
+  rf_readwriter_list                                       rf_readwriter_list? @relation(fields: [rs_rwl_id], references: [rwl_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_ketsu_reason_list_rf_readwriter_list")
+  rf_status                                                rf_status?          @relation(fields: [rs_status_id], references: [rf_status_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_ketsu_reason_list_rf_status")
+  rf_users_rf_ketsu_reason_list_rs_createdby_idTorf_users  rf_users?           @relation("rf_ketsu_reason_list_rs_createdby_idTorf_users", fields: [rs_createdby_id], references: [rsr_user_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_ketsu_reason_list_rf_users")
+  rf_users_rf_ketsu_reason_list_rs_modifiedby_idTorf_users rf_users?           @relation("rf_ketsu_reason_list_rs_modifiedby_idTorf_users", fields: [rs_modifiedby_id], references: [rsr_user_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_ketsu_reason_list_rf_users1")
+
+  @@index([rs_reason_id, rs_status_id, rs_createdby_id, rs_modifiedby_id, rs_reason_desc, rs_deleted, rs_rwl_id], map: "IX_rf_ketsu_reason_list")
+}
+
+model rf_position {
+  rfp_pos_id                                       Int                @id(map: "PK_rf_position") @default(autoincrement()) @db.TinyInt
+  rfp_pos_name                                     String?            @db.NVarChar(20)
+  rfp_createdby_id                                 String?            @db.UniqueIdentifier
+  rfp_created_date                                 DateTime?          @db.DateTime
+  rfp_modifiedby_id                                String?            @db.UniqueIdentifier
+  rfp_modified_date                                DateTime?          @db.DateTime
+  rfp_deleted                                      Boolean?
+  rf_employee_list                                 rf_employee_list[]
+  rf_users_rf_position_rfp_createdby_idTorf_users  rf_users?          @relation("rf_position_rfp_createdby_idTorf_users", fields: [rfp_createdby_id], references: [rsr_user_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_position_rf_users")
+  rf_users_rf_position_rfp_modifiedby_idTorf_users rf_users?          @relation("rf_position_rfp_modifiedby_idTorf_users", fields: [rfp_modifiedby_id], references: [rsr_user_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_position_rf_users1")
+
+  @@index([rfp_pos_id, rfp_createdby_id, rfp_modifiedby_id, rfp_deleted], map: "IX_rf_position")
+  @@index([rfp_pos_name], map: "IX_rf_position_1")
 }
 
 model rf_read_tags {
@@ -239,6 +439,7 @@ model rf_readwriter_list {
   rf_employee_logs                                                                           rf_employee_logs[]
   rf_employee_logs_detailed_rf_employee_logs_detailed_reld_rwl_idTorf_readwriter_list        rf_employee_logs_detailed[] @relation("rf_employee_logs_detailed_reld_rwl_idTorf_readwriter_list")
   rf_employee_logs_detailed_rf_employee_logs_detailed_reld_emp_origrw_idTorf_readwriter_list rf_employee_logs_detailed[] @relation("rf_employee_logs_detailed_reld_emp_origrw_idTorf_readwriter_list")
+  rf_ketsu_reason_list                                                                       rf_ketsu_reason_list[]
   rf_area_list                                                                               rf_area_list?               @relation(fields: [rwl_area_id], references: [rfa_area_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_readwriter_list_rf_area_list")
   rf_rwlocation_list                                                                         rf_rwlocation_list?         @relation(fields: [rwl_rwlocation_id], references: [rfb_rw_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_readwriter_list_rf_rwlocation_list")
   rf_users_rf_readwriter_list_rwl_createdby_idTorf_users                                     rf_users?                   @relation("rf_readwriter_list_rwl_createdby_idTorf_users", fields: [rwl_createdby_id], references: [rsr_user_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_readwriter_list_rf_users")
@@ -250,13 +451,15 @@ model rf_readwriter_list {
 }
 
 model rf_receiver_eventlist {
-  rev_rw_id         String         @id(map: "PK_rf_receiver_eventlist") @db.NVarChar(50)
-  rev_createdby_id  String?        @db.UniqueIdentifier
-  rev_created_date  DateTime?      @db.DateTime
-  rev_modifiedby_id String?        @db.UniqueIdentifier
-  rev_modified_date DateTime?      @db.DateTime
-  rev_deleted       Boolean?
-  rf_read_tags      rf_read_tags[]
+  rev_rw_id                                                  String         @id(map: "PK_rf_receiver_eventlist") @db.NVarChar(50)
+  rev_createdby_id                                           String?        @db.UniqueIdentifier
+  rev_created_date                                           DateTime?      @db.DateTime
+  rev_modifiedby_id                                          String?        @db.UniqueIdentifier
+  rev_modified_date                                          DateTime?      @db.DateTime
+  rev_deleted                                                Boolean?
+  rf_read_tags                                               rf_read_tags[]
+  rf_users_rf_receiver_eventlist_rev_createdby_idTorf_users  rf_users?      @relation("rf_receiver_eventlist_rev_createdby_idTorf_users", fields: [rev_createdby_id], references: [rsr_user_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_receiver_eventlist_rf_users")
+  rf_users_rf_receiver_eventlist_rev_modifiedby_idTorf_users rf_users?      @relation("rf_receiver_eventlist_rev_modifiedby_idTorf_users", fields: [rev_modifiedby_id], references: [rsr_user_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_receiver_eventlist_rf_users1")
 
   @@index([rev_rw_id], map: "IX_rf_receiver_eventlist")
 }
@@ -290,6 +493,7 @@ model rf_rwlocation_list {
   rfd_modifiedby_id                                       String?              @db.UniqueIdentifier
   rfd_modified_date                                       DateTime?            @db.DateTime
   rfb_deleted                                             Boolean?
+  rf_ketsu_logs                                           rf_ketsu_logs[]
   rf_readwriter_list                                      rf_readwriter_list[]
   rf_users_rf_rwlocation_list_rfb_createdby_idTorf_users  rf_users?            @relation("rf_rwlocation_list_rfb_createdby_idTorf_users", fields: [rfb_createdby_id], references: [rsr_user_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_rwlocation_list_rf_users")
   rf_users_rf_rwlocation_list_rfd_modifiedby_idTorf_users rf_users?            @relation("rf_rwlocation_list_rfd_modifiedby_idTorf_users", fields: [rfd_modifiedby_id], references: [rsr_user_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_rwlocation_list_rf_users1")
@@ -310,11 +514,76 @@ model rf_status {
   rf_employee_board                              rf_employee_board[]
   rf_employee_logs                               rf_employee_logs[]
   rf_employee_logs_detailed                      rf_employee_logs_detailed[]
+  rf_ketsu_reason_list                           rf_ketsu_reason_list[]
   rf_users_rf_status_rfs_createdby_idTorf_users  rf_users?                   @relation("rf_status_rfs_createdby_idTorf_users", fields: [rfs_createdby_id], references: [rsr_user_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_status_rf_users")
   rf_users_rf_status_rfs_modifiedby_idTorf_users rf_users?                   @relation("rf_status_rfs_modifiedby_idTorf_users", fields: [rfs_modifiedby_id], references: [rsr_user_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_status_rf_users1")
 
   @@index([rf_status_id, rfs_sign, rfs_deleted], map: "IX_rf_status")
   @@index([rfs_sign, rf_status_id], map: "IX_rf_status_1")
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model rf_temp_employee {
+  temp_gid       String? @db.NVarChar(20)
+  temp_name      String? @db.NVarChar(50)
+  temp_proc      String? @db.NVarChar(20)
+  temp_bldg      String? @db.NVarChar(10)
+  temp_shift     String? @db.NVarChar(10)
+  temp_div       String? @db.NVarChar(10)
+  temp_pos       String? @db.NVarChar(10)
+  temp_confirm_a String? @db.NVarChar(50)
+  temp_confirm_b String? @db.NVarChar(50)
+  temp_confirm_c String? @db.NVarChar(50)
+  temp_confirm_d String? @db.NVarChar(50)
+  temp_confirm_e String? @db.NVarChar(50)
+  temp_confirm_f String? @db.NVarChar(50)
+  temp_kakari    String? @db.NVarChar(10)
+  temp_status    String? @db.NVarChar(10)
+
+  @@index([temp_gid], map: "IX_rf_temp_employee")
+  @@index([temp_gid, temp_status, temp_name], map: "IX_rf_temp_employee_1")
+  @@ignore
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model rf_temp_employee_cardinfo {
+  temp_gid  String? @db.NVarChar(15)
+  temp_card String? @db.NVarChar(15)
+  temp_name String? @db.NVarChar(50)
+
+  @@index([temp_gid, temp_card], map: "IX_rf_temp_employee_cardinfo")
+  @@ignore
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model rf_temp_employee_inout {
+  temp_gid   String?   @db.NVarChar(20)
+  temp_date  DateTime? @db.SmallDateTime
+  temp_shift String?   @db.NVarChar(20)
+  temp_inout Int?      @db.TinyInt
+
+  @@index([temp_gid, temp_date, temp_inout, temp_shift], map: "IX_rf_temp_employee_inout")
+  @@index([temp_gid, temp_inout], map: "IX_rf_temp_employee_inout_1")
+  @@ignore
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model rf_temp_employee_leave {
+  temp_gid       String?   @db.NVarChar(20)
+  temp_leavetype Int?      @db.SmallInt
+  temp_leavedate DateTime? @db.Date
+  temp_team      String?   @db.NVarChar(10)
+
+  @@ignore
+}
+
+model rf_temp_employee_logs {
+  rtl_id          Int       @id(map: "PK_rf_temp_employee_logs") @default(autoincrement())
+  rtl_result      String?   @db.NVarChar(Max)
+  rtl_create_date DateTime? @db.DateTime
+  rtl_gid         String?   @db.NVarChar(20)
+
+  @@index([rtl_gid], map: "IX_rf_temp_employee_logs")
 }
 
 model rf_temp_gatedata {
@@ -333,6 +602,8 @@ model rf_temp_leavedata {
   rdt_gid             String?   @db.NVarChar(20)
   rdt_team            String?   @db.NVarChar(10)
   rdt_leavetype_rwild Int?      @db.TinyInt
+
+  @@index([rdt_gid], map: "IX_rf_temp_leavedata")
 }
 
 model rf_temp_shiftdata {
@@ -343,6 +614,7 @@ model rf_temp_shiftdata {
   rwt_workershift_id Int?      @db.TinyInt
 
   @@index([rwt_id, rwt_date, rwt_workershift_id, rwt_workerteam_id], map: "IX_rf_temp_shiftdata")
+  @@index([rwt_workershift_id, rwt_workerteam_id, rwt_date(sort: Desc)], map: "IX_rf_temp_shiftdata_1")
 }
 
 model rf_user_acclvl {
@@ -362,73 +634,62 @@ model rf_user_acclvl {
 }
 
 model rf_users {
-  rsr_user_id                                                             String                  @id(map: "PK_rf_users") @default(dbgenerated("newid()"), map: "DF_Table_1_rsr_user_id") @db.UniqueIdentifier
-  rsr_gid                                                                 String?                 @db.NVarChar(20)
-  rsr_fname                                                               String?                 @db.NVarChar(50)
-  rsr_lname                                                               String?                 @db.NVarChar(50)
-  rsr_acclvl_id                                                           Int?                    @db.SmallInt
-  rsr_createdby_id                                                        String?                 @db.UniqueIdentifier
-  rsr_created_date                                                        DateTime?               @db.DateTime
-  rsr_modifiedby_id                                                       String?                 @db.UniqueIdentifier
-  rsr_modified_date                                                       DateTime?               @db.DateTime
-  rsr_deleted                                                             Boolean?
-  rf_access_rights_rf_access_rights_ras_createdby_idTorf_users            rf_access_rights[]      @relation("rf_access_rights_ras_createdby_idTorf_users")
-  rf_access_rights_rf_access_rights_ras_modifiedby_idTorf_users           rf_access_rights[]      @relation("rf_access_rights_ras_modifiedby_idTorf_users")
-  rf_area_list_rf_area_list_rfa_createdby_idTorf_users                    rf_area_list[]          @relation("rf_area_list_rfa_createdby_idTorf_users")
-  rf_area_list_rf_area_list_rfa_modifiedby_idTorf_users                   rf_area_list[]          @relation("rf_area_list_rfa_modifiedby_idTorf_users")
-  rf_division_rf_division_rdv_createdby_idTorf_users                      rf_division[]           @relation("rf_division_rdv_createdby_idTorf_users")
-  rf_division_rf_division_rdv_modifiedby_idTorf_users                     rf_division[]           @relation("rf_division_rdv_modifiedby_idTorf_users")
-  rf_employee_bldglist_rf_employee_bldglist_rwa_createdby_idTorf_users    rf_employee_bldglist[]  @relation("rf_employee_bldglist_rwa_createdby_idTorf_users")
-  rf_employee_bldglist_rf_employee_bldglist_rwa_modifiedby_idTorf_users   rf_employee_bldglist[]  @relation("rf_employee_bldglist_rwa_modifiedby_idTorf_users")
-  rf_employee_board_rf_employee_board_rbe_createdby_idTorf_users          rf_employee_board[]     @relation("rf_employee_board_rbe_createdby_idTorf_users")
-  rf_employee_board_rf_employee_board_rbe_modifiedby_idTorf_users         rf_employee_board[]     @relation("rf_employee_board_rbe_modifiedby_idTorf_users")
-  rf_employee_list_rf_employee_list_rfe_createdby_idTorf_users            rf_employee_list[]      @relation("rf_employee_list_rfe_createdby_idTorf_users")
-  rf_employee_list_rf_employee_list_rfe_modifiedby_idTorf_users           rf_employee_list[]      @relation("rf_employee_list_rfe_modifiedby_idTorf_users")
-  rf_employee_proclist_rf_employee_proclist_rwp_createdby_idTorf_users    rf_employee_proclist[]  @relation("rf_employee_proclist_rwp_createdby_idTorf_users")
-  rf_employee_proclist_rf_employee_proclist_rwp_modifiedby_idTorf_users   rf_employee_proclist[]  @relation("rf_employee_proclist_rwp_modifiedby_idTorf_users")
-  rf_employee_shiftlist_rf_employee_shiftlist_rfs_createdby_idTorf_users  rf_employee_shiftlist[] @relation("rf_employee_shiftlist_rfs_createdby_idTorf_users")
-  rf_employee_shiftlist_rf_employee_shiftlist_rfs_modifiedby_idTorf_users rf_employee_shiftlist[] @relation("rf_employee_shiftlist_rfs_modifiedby_idTorf_users")
-  rf_employee_teamlist_rf_employee_teamlist_rte_modifiedby_idTorf_users   rf_employee_teamlist[]  @relation("rf_employee_teamlist_rte_modifiedby_idTorf_users")
-  rf_employee_teamlist_rf_employee_teamlist_rte_createdby_idTorf_users    rf_employee_teamlist[]  @relation("rf_employee_teamlist_rte_createdby_idTorf_users")
-  rf_gender_rf_gender_rfg_createdby_idTorf_users                          rf_gender[]             @relation("rf_gender_rfg_createdby_idTorf_users")
-  rf_gender_rf_gender_rfg_modifiedby_idTorf_users                         rf_gender[]             @relation("rf_gender_rfg_modifiedby_idTorf_users")
-  rf_position_rf_position_rfp_createdby_idTorf_users                      rf_position[]           @relation("rf_position_rfp_createdby_idTorf_users")
-  rf_position_rf_position_rfp_modifiedby_idTorf_users                     rf_position[]           @relation("rf_position_rfp_modifiedby_idTorf_users")
-  rf_readwriter_list_rf_readwriter_list_rwl_createdby_idTorf_users        rf_readwriter_list[]    @relation("rf_readwriter_list_rwl_createdby_idTorf_users")
-  rf_readwriter_list_rf_readwriter_list_rwl_modifiedby_idTorf_users       rf_readwriter_list[]    @relation("rf_readwriter_list_rwl_modifiedby_idTorf_users")
-  rf_rfidtag_list_rf_rfidtag_list_rfd_createdby_idTorf_users              rf_rfidtag_list[]       @relation("rf_rfidtag_list_rfd_createdby_idTorf_users")
-  rf_rfidtag_list_rf_rfidtag_list_rfd_modifiedby_idTorf_users             rf_rfidtag_list[]       @relation("rf_rfidtag_list_rfd_modifiedby_idTorf_users")
-  rf_rwlocation_list_rf_rwlocation_list_rfb_createdby_idTorf_users        rf_rwlocation_list[]    @relation("rf_rwlocation_list_rfb_createdby_idTorf_users")
-  rf_rwlocation_list_rf_rwlocation_list_rfd_modifiedby_idTorf_users       rf_rwlocation_list[]    @relation("rf_rwlocation_list_rfd_modifiedby_idTorf_users")
-  rf_status_rf_status_rfs_createdby_idTorf_users                          rf_status[]             @relation("rf_status_rfs_createdby_idTorf_users")
-  rf_status_rf_status_rfs_modifiedby_idTorf_users                         rf_status[]             @relation("rf_status_rfs_modifiedby_idTorf_users")
-  rf_user_acclvl_rf_user_acclvl_ral_createdby_idTorf_users                rf_user_acclvl[]        @relation("rf_user_acclvl_ral_createdby_idTorf_users")
-  rf_user_acclvl_rf_user_acclvl_ral_modifiedby_idTorf_users               rf_user_acclvl[]        @relation("rf_user_acclvl_ral_modifiedby_idTorf_users")
-  rf_user_acclvl_rf_users_rsr_acclvl_idTorf_user_acclvl                   rf_user_acclvl?         @relation("rf_users_rsr_acclvl_idTorf_user_acclvl", fields: [rsr_acclvl_id], references: [ral_acclvl_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_users_rf_user_acclvl")
+  rsr_user_id                                                                   String                     @id(map: "PK_rf_users") @default(dbgenerated("newid()"), map: "DF_Table_1_rsr_user_id") @db.UniqueIdentifier
+  rsr_gid                                                                       String?                    @db.NVarChar(20)
+  rsr_fname                                                                     String?                    @db.NVarChar(50)
+  rsr_lname                                                                     String?                    @db.NVarChar(50)
+  rsr_acclvl_id                                                                 Int?                       @db.SmallInt
+  rsr_createdby_id                                                              String?                    @db.UniqueIdentifier
+  rsr_created_date                                                              DateTime?                  @db.DateTime
+  rsr_modifiedby_id                                                             String?                    @db.UniqueIdentifier
+  rsr_modified_date                                                             DateTime?                  @db.DateTime
+  rsr_deleted                                                                   Boolean?
+  rf_access_rights_rf_access_rights_ras_createdby_idTorf_users                  rf_access_rights[]         @relation("rf_access_rights_ras_createdby_idTorf_users")
+  rf_access_rights_rf_access_rights_ras_modifiedby_idTorf_users                 rf_access_rights[]         @relation("rf_access_rights_ras_modifiedby_idTorf_users")
+  rf_area_list_rf_area_list_rfa_createdby_idTorf_users                          rf_area_list[]             @relation("rf_area_list_rfa_createdby_idTorf_users")
+  rf_area_list_rf_area_list_rfa_modifiedby_idTorf_users                         rf_area_list[]             @relation("rf_area_list_rfa_modifiedby_idTorf_users")
+  rf_division_rf_division_rdv_createdby_idTorf_users                            rf_division[]              @relation("rf_division_rdv_createdby_idTorf_users")
+  rf_division_rf_division_rdv_modifiedby_idTorf_users                           rf_division[]              @relation("rf_division_rdv_modifiedby_idTorf_users")
+  rf_employee_bldglist_rf_employee_bldglist_rwa_createdby_idTorf_users          rf_employee_bldglist[]     @relation("rf_employee_bldglist_rwa_createdby_idTorf_users")
+  rf_employee_bldglist_rf_employee_bldglist_rwa_modifiedby_idTorf_users         rf_employee_bldglist[]     @relation("rf_employee_bldglist_rwa_modifiedby_idTorf_users")
+  rf_employee_board_rf_employee_board_rbe_createdby_idTorf_users                rf_employee_board[]        @relation("rf_employee_board_rbe_createdby_idTorf_users")
+  rf_employee_board_rf_employee_board_rbe_modifiedby_idTorf_users               rf_employee_board[]        @relation("rf_employee_board_rbe_modifiedby_idTorf_users")
+  rf_employee_list_rf_employee_list_rfe_createdby_idTorf_users                  rf_employee_list[]         @relation("rf_employee_list_rfe_createdby_idTorf_users")
+  rf_employee_list_rf_employee_list_rfe_modifiedby_idTorf_users                 rf_employee_list[]         @relation("rf_employee_list_rfe_modifiedby_idTorf_users")
+  rf_employee_proclist_rf_employee_proclist_rwp_createdby_idTorf_users          rf_employee_proclist[]     @relation("rf_employee_proclist_rwp_createdby_idTorf_users")
+  rf_employee_proclist_rf_employee_proclist_rwp_modifiedby_idTorf_users         rf_employee_proclist[]     @relation("rf_employee_proclist_rwp_modifiedby_idTorf_users")
+  rf_employee_shiftlist_rf_employee_shiftlist_rfs_createdby_idTorf_users        rf_employee_shiftlist[]    @relation("rf_employee_shiftlist_rfs_createdby_idTorf_users")
+  rf_employee_shiftlist_rf_employee_shiftlist_rfs_modifiedby_idTorf_users       rf_employee_shiftlist[]    @relation("rf_employee_shiftlist_rfs_modifiedby_idTorf_users")
+  rf_employee_teamlist_rf_employee_teamlist_rte_modifiedby_idTorf_users         rf_employee_teamlist[]     @relation("rf_employee_teamlist_rte_modifiedby_idTorf_users")
+  rf_employee_teamlist_rf_employee_teamlist_rte_createdby_idTorf_users          rf_employee_teamlist[]     @relation("rf_employee_teamlist_rte_createdby_idTorf_users")
+  rf_gender_rf_gender_rfg_createdby_idTorf_users                                rf_gender[]                @relation("rf_gender_rfg_createdby_idTorf_users")
+  rf_gender_rf_gender_rfg_modifiedby_idTorf_users                               rf_gender[]                @relation("rf_gender_rfg_modifiedby_idTorf_users")
+  rf_kakari_list_rf_kakari_list_rfk_createdby_idTorf_users                      rf_kakari_list[]           @relation("rf_kakari_list_rfk_createdby_idTorf_users")
+  rf_kakari_list_rf_kakari_list_rfk_modifiedby_idTorf_users                     rf_kakari_list[]           @relation("rf_kakari_list_rfk_modifiedby_idTorf_users")
+  rf_ketsu_alert_type_list_rf_ketsu_alert_type_list_rtp_createdby_idTorf_users  rf_ketsu_alert_type_list[] @relation("rf_ketsu_alert_type_list_rtp_createdby_idTorf_users")
+  rf_ketsu_alert_type_list_rf_ketsu_alert_type_list_rtp_modifiedby_idTorf_users rf_ketsu_alert_type_list[] @relation("rf_ketsu_alert_type_list_rtp_modifiedby_idTorf_users")
+  rf_ketsu_iscontact_list_rf_ketsu_iscontact_list_rcd_createdby_idTorf_users    rf_ketsu_iscontact_list[]  @relation("rf_ketsu_iscontact_list_rcd_createdby_idTorf_users")
+  rf_ketsu_iscontact_list_rf_ketsu_iscontact_list_rcd_modifiedby_idTorf_users   rf_ketsu_iscontact_list[]  @relation("rf_ketsu_iscontact_list_rcd_modifiedby_idTorf_users")
+  rf_ketsu_logs                                                                 rf_ketsu_logs[]
+  rf_ketsu_reason_list_rf_ketsu_reason_list_rs_createdby_idTorf_users           rf_ketsu_reason_list[]     @relation("rf_ketsu_reason_list_rs_createdby_idTorf_users")
+  rf_ketsu_reason_list_rf_ketsu_reason_list_rs_modifiedby_idTorf_users          rf_ketsu_reason_list[]     @relation("rf_ketsu_reason_list_rs_modifiedby_idTorf_users")
+  rf_position_rf_position_rfp_createdby_idTorf_users                            rf_position[]              @relation("rf_position_rfp_createdby_idTorf_users")
+  rf_position_rf_position_rfp_modifiedby_idTorf_users                           rf_position[]              @relation("rf_position_rfp_modifiedby_idTorf_users")
+  rf_readwriter_list_rf_readwriter_list_rwl_createdby_idTorf_users              rf_readwriter_list[]       @relation("rf_readwriter_list_rwl_createdby_idTorf_users")
+  rf_readwriter_list_rf_readwriter_list_rwl_modifiedby_idTorf_users             rf_readwriter_list[]       @relation("rf_readwriter_list_rwl_modifiedby_idTorf_users")
+  rf_receiver_eventlist_rf_receiver_eventlist_rev_createdby_idTorf_users        rf_receiver_eventlist[]    @relation("rf_receiver_eventlist_rev_createdby_idTorf_users")
+  rf_receiver_eventlist_rf_receiver_eventlist_rev_modifiedby_idTorf_users       rf_receiver_eventlist[]    @relation("rf_receiver_eventlist_rev_modifiedby_idTorf_users")
+  rf_rfidtag_list_rf_rfidtag_list_rfd_createdby_idTorf_users                    rf_rfidtag_list[]          @relation("rf_rfidtag_list_rfd_createdby_idTorf_users")
+  rf_rfidtag_list_rf_rfidtag_list_rfd_modifiedby_idTorf_users                   rf_rfidtag_list[]          @relation("rf_rfidtag_list_rfd_modifiedby_idTorf_users")
+  rf_rwlocation_list_rf_rwlocation_list_rfb_createdby_idTorf_users              rf_rwlocation_list[]       @relation("rf_rwlocation_list_rfb_createdby_idTorf_users")
+  rf_rwlocation_list_rf_rwlocation_list_rfd_modifiedby_idTorf_users             rf_rwlocation_list[]       @relation("rf_rwlocation_list_rfd_modifiedby_idTorf_users")
+  rf_status_rf_status_rfs_createdby_idTorf_users                                rf_status[]                @relation("rf_status_rfs_createdby_idTorf_users")
+  rf_status_rf_status_rfs_modifiedby_idTorf_users                               rf_status[]                @relation("rf_status_rfs_modifiedby_idTorf_users")
+  rf_user_acclvl_rf_user_acclvl_ral_createdby_idTorf_users                      rf_user_acclvl[]           @relation("rf_user_acclvl_ral_createdby_idTorf_users")
+  rf_user_acclvl_rf_user_acclvl_ral_modifiedby_idTorf_users                     rf_user_acclvl[]           @relation("rf_user_acclvl_ral_modifiedby_idTorf_users")
+  rf_user_acclvl_rf_users_rsr_acclvl_idTorf_user_acclvl                         rf_user_acclvl?            @relation("rf_users_rsr_acclvl_idTorf_user_acclvl", fields: [rsr_acclvl_id], references: [ral_acclvl_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_users_rf_user_acclvl")
 
   @@index([rsr_user_id, rsr_acclvl_id, rsr_gid, rsr_deleted], map: "IX_rf_users")
-}
-
-model rf_employee_logs_detailed {
-  reld_id                                                                             BigInt              @id(map: "PK_rf_employee_logs_detailed") @default(autoincrement())
-  reld_emp_id                                                                         String?             @db.UniqueIdentifier
-  reld_taginfo_id                                                                     String?             @db.NVarChar(50)
-  reld_rwl_id                                                                         Int?
-  reld_datetime                                                                       DateTime?           @db.DateTime
-  reld_status_id                                                                      Int?                @db.TinyInt
-  reld_emp_origrw_id                                                                  Int?
-  reld_autolog_date                                                                   DateTime?           @db.DateTime
-  rf_employee_list                                                                    rf_employee_list?   @relation(fields: [reld_emp_id], references: [rfe_emp_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_employee_logs_detailed_rf_employee_list")
-  rf_readwriter_list_rf_employee_logs_detailed_reld_rwl_idTorf_readwriter_list        rf_readwriter_list? @relation("rf_employee_logs_detailed_reld_rwl_idTorf_readwriter_list", fields: [reld_rwl_id], references: [rwl_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_employee_logs_detailed_rf_readwriter_list")
-  rf_readwriter_list_rf_employee_logs_detailed_reld_emp_origrw_idTorf_readwriter_list rf_readwriter_list? @relation("rf_employee_logs_detailed_reld_emp_origrw_idTorf_readwriter_list", fields: [reld_emp_origrw_id], references: [rwl_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_employee_logs_detailed_rf_readwriter_list1")
-  rf_rfidtag_list                                                                     rf_rfidtag_list?    @relation(fields: [reld_taginfo_id], references: [rfd_taginfo_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_employee_logs_detailed_rf_rfidtag_list")
-  rf_status                                                                           rf_status?          @relation(fields: [reld_status_id], references: [rf_status_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_employee_logs_detailed_rf_status")
-
-  @@index([reld_id, reld_autolog_date, reld_datetime, reld_taginfo_id, reld_rwl_id, reld_status_id, reld_emp_id, reld_emp_origrw_id], map: "IX_rf_employee_logs_detailed")
-  @@index([reld_id, reld_autolog_date], map: "IX_rf_employee_logs_detailed_1")
-  @@index([reld_autolog_date], map: "IX_rf_employee_logs_detailed_2")
-  @@index([reld_emp_origrw_id, reld_rwl_id, reld_emp_id], map: "IX_rf_employee_logs_detailed_4")
-  @@index([reld_emp_origrw_id, reld_autolog_date], map: "IX_rf_employee_logs_detailed_5")
 }
 
 model sysdiagrams {
@@ -441,40 +702,98 @@ model sysdiagrams {
   @@unique([principal_id, name], map: "UK_principal_name")
 }
 
-model rf_division {
-  rdv_div_id                                       Int                @id(map: "PK_rf_division") @default(autoincrement()) @db.SmallInt
-  rdv_div_name                                     String?            @db.NVarChar(20)
-  rdv_createdby_id                                 String?            @db.UniqueIdentifier
-  rdv_created_date                                 DateTime?          @db.DateTime
-  rdv_modifiedby_id                                String?            @db.UniqueIdentifier
-  rdv_modified_date                                DateTime?          @db.DateTime
-  rfd_deleted                                      Boolean?
-  rf_users_rf_division_rdv_createdby_idTorf_users  rf_users?          @relation("rf_division_rdv_createdby_idTorf_users", fields: [rdv_createdby_id], references: [rsr_user_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_division_rf_users")
-  rf_users_rf_division_rdv_modifiedby_idTorf_users rf_users?          @relation("rf_division_rdv_modifiedby_idTorf_users", fields: [rdv_modifiedby_id], references: [rsr_user_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_division_rf_users1")
-  rf_employee_list                                 rf_employee_list[]
+/// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+view view_employee_cardgid {
+  rfe_gid         String?  @db.NVarChar(20)
+  rfe_emp_id      String   @db.UniqueIdentifier
+  rfe_deleted     Boolean?
+  rfe_active      Boolean?
+  rfe_emp_team_id Int?     @db.TinyInt
 
-  @@index([rdv_div_id, rdv_createdby_id, rdv_modifiedby_id, rfd_deleted], map: "IX_rf_division")
-  @@index([rdv_div_name], map: "IX_rf_division_1")
+  @@ignore
 }
 
-model rf_position {
-  rfp_pos_id                                       Int                @id(map: "PK_rf_position") @default(autoincrement()) @db.TinyInt
-  rfp_pos_name                                     String?            @db.NVarChar(20)
-  rfp_createdby_id                                 String?            @db.UniqueIdentifier
-  rfp_created_date                                 DateTime?          @db.DateTime
-  rfp_modifiedby_id                                String?            @db.UniqueIdentifier
-  rfp_modified_date                                DateTime?          @db.DateTime
-  rfp_deleted                                      Boolean?
-  rf_employee_list                                 rf_employee_list[]
-  rf_users_rf_position_rfp_createdby_idTorf_users  rf_users?          @relation("rf_position_rfp_createdby_idTorf_users", fields: [rfp_createdby_id], references: [rsr_user_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_position_rf_users")
-  rf_users_rf_position_rfp_modifiedby_idTorf_users rf_users?          @relation("rf_position_rfp_modifiedby_idTorf_users", fields: [rfp_modifiedby_id], references: [rsr_user_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_rf_position_rf_users1")
-
-  @@index([rfp_pos_id, rfp_createdby_id, rfp_modifiedby_id, rfp_deleted], map: "IX_rf_position")
-  @@index([rfp_pos_name], map: "IX_rf_position_1")
+/// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+view view_employee_board {
+  empID        String   @unique @db.UniqueIdentifier
+  tagID        String?   @db.NVarChar(50)
+  lastUpdate   String?   @db.NVarChar(4000)
+  timeElapse   String?   @db.VarChar(10)
+  displayName  String?   @db.NVarChar(100)
+  statusID     Int?      @db.TinyInt
+  sign         String?   @db.NVarChar(50)
+  readwriterID Int?
+  comment      String?   @db.NVarChar(50)
+  areaID       Int       @db.SmallInt
+  areaDesc     String?   @db.NVarChar(50)
+  alarm        Boolean?
+  setAlarm     String?   @db.VarChar(10)
+  setCount     Boolean?
+  locID        Int       @db.TinyInt
+  locDesc      String?   @db.NVarChar(50)
+  floor        String?   @db.NVarChar(20)
+  buildloc     String?   @db.NVarChar(70)
+  empProcessID Int       @db.SmallInt
+  processName  String?   @db.NVarChar(50)
+  teamID       Int       @db.TinyInt
+  teamName     String?   @db.NVarChar(20)
+  leaveStart   DateTime? @db.DateTime
+  leaveEnd     DateTime? @db.DateTime
+  leaveType    Int?      @db.TinyInt
+  emprwID      Int?
+  empLoc       Int?      @db.TinyInt
+  empArea      Int?      @db.SmallInt
+  divID        Int?      @db.SmallInt
+  posID        Int?      @db.TinyInt
+  statusOrder  Int?      @db.TinyInt
+  kakariID     Int?      @db.TinyInt
+  kakariDesc   String?   @db.NVarChar(50)
+  onShift      Int
 }
 
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
-model rf_temp_employee {
+/// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+view view_employee_logs {
+  empID           String?   @db.UniqueIdentifier
+  tagInfo         String?   @db.NVarChar(50)
+  areaTimestamp   DateTime? @db.DateTime
+  displayName     String?   @db.NVarChar(100)
+  signID          Int       @db.TinyInt
+  sign            String?   @db.NVarChar(50)
+  destinationArea String?   @db.NVarChar(50)
+  divName         String?   @db.NVarChar(20)
+  workArea        String?   @db.NVarChar(50)
+  gid             String?   @db.NVarChar(20)
+  team            String?   @db.NVarChar(20)
+  bldg            String?   @db.NVarChar(70)
+
+  @@ignore
+}
+
+/// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+view view_readwriter_area_master {
+  areaID   Int      @db.SmallInt
+  areaName String?  @db.NVarChar(50)
+  bldg     String?  @db.NVarChar(70)
+  isDept   Boolean?
+
+  @@ignore
+}
+
+/// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+view view_worker_area_list {
+  areaID     Int
+  areaDesc   String? @db.NVarChar(50)
+  locationID Int?    @db.TinyInt
+  bldg       String? @db.NVarChar(70)
+
+  @@ignore
+}
+
+/// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+view view_employee_import_resultchecker {
+  rfe_gid    String? @db.NVarChar(20)
+  rfe_fname  String? @db.NVarChar(50)
+  rfe_lname  String? @db.NVarChar(50)
   temp_gid   String? @db.NVarChar(20)
   temp_name  String? @db.NVarChar(50)
   temp_proc  String? @db.NVarChar(20)
@@ -483,25 +802,272 @@ model rf_temp_employee {
   temp_div   String? @db.NVarChar(10)
   temp_pos   String? @db.NVarChar(10)
 
-  @@index([temp_gid, temp_bldg, temp_div, temp_name, temp_pos, temp_proc, temp_shift], map: "IX_rf_temp_employee")
   @@ignore
 }
 
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
-model rf_temp_employee_leave {
-  temp_gid       String?   @db.NVarChar(20)
-  temp_leavetype Int?      @db.SmallInt
-  temp_leavedate DateTime? @db.Date
-  temp_team      String?   @db.NVarChar(10)
+/// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+view view_position_list {
+  posID   Int     @default(autoincrement()) @db.TinyInt
+  posName String? @db.NVarChar(20)
 
   @@ignore
 }
 
-model rf_temp_employee_logs {
-  rtl_id          Int       @id(map: "PK_rf_temp_employee_logs") @default(autoincrement())
-  rtl_result      String?   @db.NVarChar(Max)
-  rtl_create_date DateTime? @db.DateTime
-  rtl_gid         String?   @db.NVarChar(20)
+/// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+view view_division_list {
+  divID   Int     @default(autoincrement()) @db.SmallInt
+  divName String? @db.NVarChar(20)
 
-  @@index([rtl_gid], map: "IX_rf_temp_employee_logs")
+  @@ignore
+}
+
+/// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+view view_ketsu_logs {
+  logID           String   @unique @db.UniqueIdentifier
+  alertType       String?  @db.NVarChar(50)
+  workerShiftDate String?  @db.NVarChar(4000)
+  processName     String?  @db.NVarChar(50)
+  shiftName       String?  @db.NVarChar(20)
+  GID             String?  @db.NVarChar(20)
+  locName         String?  @db.NVarChar(70)
+  teamName        String?  @db.NVarChar(20)
+  displayName     String?  @db.NVarChar(50)
+  checkerWorkerA  String?  @db.NVarChar(50)
+  checkerWorkerB  String?  @db.NVarChar(50)
+  checkerWorkerC  String?  @db.NVarChar(50)
+  checkerWorkerD  String?  @db.NVarChar(50)
+  checkerWorkerE  String?  @db.NVarChar(50)
+  checkerWorkerF  String?  @db.NVarChar(50)
+  confirmWorker   String?  @db.NVarChar(50)
+  reasonDesc      String?  @db.NVarChar(50)
+  contactDesc     String?  @db.NVarChar(50)
+  confirmWorkerID String?  @db.UniqueIdentifier
+  reasonID        Int?     @db.TinyInt
+  iscontactID     Int?     @db.TinyInt
+  createdDate     String?  @db.NVarChar(4000)
+  toShow          Boolean?
+  shiftID         Int      @db.TinyInt
+  empID           String?  @db.UniqueIdentifier
+  divName         String?  @db.NVarChar(20)
+  kakariDesc      String?  @db.NVarChar(50)
+  recipient       String   @db.NVarChar(305)
+  confirm         Boolean?
+}
+
+/// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+view view_ketsu_logs_for_csvexport {
+  /// This field was commented out because of an invalid name. Please provide a valid one that matches [a-zA-Z][a-zA-Z0-9_]*
+  // アラート区分 String? @map("アラート区分") @db.NVarChar(50)
+  /// This field was commented out because of an invalid name. Please provide a valid one that matches [a-zA-Z][a-zA-Z0-9_]*
+  // 更新時間 String? @map("更新時間") @db.NVarChar(4000)
+  /// This field was commented out because of an invalid name. Please provide a valid one that matches [a-zA-Z][a-zA-Z0-9_]*
+  // 実工程 String? @map("実工程") @db.NVarChar(50)
+  /// This field was commented out because of an invalid name. Please provide a valid one that matches [a-zA-Z][a-zA-Z0-9_]*
+  // 号棟 String? @map("号棟") @db.NVarChar(70)
+  /// This field was commented out because of an invalid name. Please provide a valid one that matches [a-zA-Z][a-zA-Z0-9_]*
+  // 実班 String? @map("実班") @db.NVarChar(20)
+  /// This field was commented out because of an invalid name. Please provide a valid one that matches [a-zA-Z][a-zA-Z0-9_]*
+  // 直 String? @map("直") @db.NVarChar(20)
+  /// This field was commented out because of an invalid name. Please provide a valid one that matches [a-zA-Z][a-zA-Z0-9_]*
+  /// This field was commented out because of an invalid name. Please provide a valid one that matches [a-zA-Z][a-zA-Z0-9_]*
+  /// This field was commented out because of an invalid name. Please provide a valid one that matches [a-zA-Z][a-zA-Z0-9_]*
+  /// This field was commented out because of an invalid name. Please provide a valid one that matches [a-zA-Z][a-zA-Z0-9_]*
+  /// This field was commented out because of an invalid name. Please provide a valid one that matches [a-zA-Z][a-zA-Z0-9_]*
+  /// This field was commented out because of an invalid name. Please provide a valid one that matches [a-zA-Z][a-zA-Z0-9_]*
+  /// This field was commented out because of an invalid name. Please provide a valid one that matches [a-zA-Z][a-zA-Z0-9_]*
+  /// This field was commented out because of an invalid name. Please provide a valid one that matches [a-zA-Z][a-zA-Z0-9_]*
+  /// This field was commented out because of an invalid name. Please provide a valid one that matches [a-zA-Z][a-zA-Z0-9_]*
+  /// This field was commented out because of an invalid name. Please provide a valid one that matches [a-zA-Z][a-zA-Z0-9_]*
+  /// This field was commented out because of an invalid name. Please provide a valid one that matches [a-zA-Z][a-zA-Z0-9_]*
+  /// This field was commented out because of an invalid name. Please provide a valid one that matches [a-zA-Z][a-zA-Z0-9_]*
+  /// This field was commented out because of an invalid name. Please provide a valid one that matches [a-zA-Z][a-zA-Z0-9_]*
+  /// This field was commented out because of an invalid name. Please provide a valid one that matches [a-zA-Z][a-zA-Z0-9_]*
+  /// This field was commented out because of an invalid name. Please provide a valid one that matches [a-zA-Z][a-zA-Z0-9_]*
+  /// This field was commented out because of an invalid name. Please provide a valid one that matches [a-zA-Z][a-zA-Z0-9_]*
+  /// This field was commented out because of an invalid name. Please provide a valid one that matches [a-zA-Z][a-zA-Z0-9_]*
+  /// This field was commented out because of an invalid name. Please provide a valid one that matches [a-zA-Z][a-zA-Z0-9_]*
+  /// This field was commented out because of an invalid name. Please provide a valid one that matches [a-zA-Z][a-zA-Z0-9_]*
+  /// This field was commented out because of an invalid name. Please provide a valid one that matches [a-zA-Z][a-zA-Z0-9_]*
+  /// This field was commented out because of an invalid name. Please provide a valid one that matches [a-zA-Z][a-zA-Z0-9_]*
+  /// This field was commented out because of an invalid name. Please provide a valid one that matches [a-zA-Z][a-zA-Z0-9_]*
+  /// This field was commented out because of an invalid name. Please provide a valid one that matches [a-zA-Z][a-zA-Z0-9_]*
+  /// This field was commented out because of an invalid name. Please provide a valid one that matches [a-zA-Z][a-zA-Z0-9_]*
+  /// This field was commented out because of an invalid name. Please provide a valid one that matches [a-zA-Z][a-zA-Z0-9_]*
+  /// This field was commented out because of an invalid name. Please provide a valid one that matches [a-zA-Z][a-zA-Z0-9_]*
+  /// This field was commented out because of an invalid name. Please provide a valid one that matches [a-zA-Z][a-zA-Z0-9_]*
+  /// This field was commented out because of an invalid name. Please provide a valid one that matches [a-zA-Z][a-zA-Z0-9_]*
+  /// This field was commented out because of an invalid name. Please provide a valid one that matches [a-zA-Z][a-zA-Z0-9_]*
+  /// This field was commented out because of an invalid name. Please provide a valid one that matches [a-zA-Z][a-zA-Z0-9_]*
+  GID     String?  @db.NVarChar(20)
+  /// This field was commented out because of an invalid name. Please provide a valid one that matches [a-zA-Z][a-zA-Z0-9_]*
+  // 氏名 String? @map("氏名") @db.NVarChar(50)
+  /// This field was commented out because of an invalid name. Please provide a valid one that matches [a-zA-Z][a-zA-Z0-9_]*
+  // 第1勤怠確認者 String? @map("第1勤怠確認者") @db.NVarChar(50)
+  /// This field was commented out because of an invalid name. Please provide a valid one that matches [a-zA-Z][a-zA-Z0-9_]*
+  // 第2勤怠確認者 String? @map("第2勤怠確認者") @db.NVarChar(50)
+  /// This field was commented out because of an invalid name. Please provide a valid one that matches [a-zA-Z][a-zA-Z0-9_]*
+  // 第3勤怠確認者 String? @map("第3勤怠確認者") @db.NVarChar(50)
+  /// This field was commented out because of an invalid name. Please provide a valid one that matches [a-zA-Z][a-zA-Z0-9_]*
+  // 第4勤怠確認者 String? @map("第4勤怠確認者") @db.NVarChar(50)
+  /// This field was commented out because of an invalid name. Please provide a valid one that matches [a-zA-Z][a-zA-Z0-9_]*
+  // 第5勤怠確認者 String? @map("第5勤怠確認者") @db.NVarChar(50)
+  /// This field was commented out because of an invalid name. Please provide a valid one that matches [a-zA-Z][a-zA-Z0-9_]*
+  // 第6勤怠確認者 String? @map("第6勤怠確認者") @db.NVarChar(50)
+  /// This field was commented out because of an invalid name. Please provide a valid one that matches [a-zA-Z][a-zA-Z0-9_]*
+  // 【確認_対応者】 String? @map("【確認_対応者】") @db.NVarChar(50)
+  /// This field was commented out because of an invalid name. Please provide a valid one that matches [a-zA-Z][a-zA-Z0-9_]*
+  // 【応答_回答者】 Int? @map("【応答_回答者】")
+  /// This field was commented out because of an invalid name. Please provide a valid one that matches [a-zA-Z][a-zA-Z0-9_]*
+  // 【内容】 String? @map("【内容】") @db.NVarChar(50)
+  /// This field was commented out because of an invalid name. Please provide a valid one that matches [a-zA-Z][a-zA-Z0-9_]*
+  // 【連絡有無】 String? @map("【連絡有無】") @db.NVarChar(50)
+  /// This field was commented out because of an invalid name. Please provide a valid one that matches [a-zA-Z][a-zA-Z0-9_]*
+  /// This field was commented out because of an invalid name. Please provide a valid one that matches [a-zA-Z][a-zA-Z0-9_]*
+  /// This field was commented out because of an invalid name. Please provide a valid one that matches [a-zA-Z][a-zA-Z0-9_]*
+  /// This field was commented out because of an invalid name. Please provide a valid one that matches [a-zA-Z][a-zA-Z0-9_]*
+  /// This field was commented out because of an invalid name. Please provide a valid one that matches [a-zA-Z][a-zA-Z0-9_]*
+  /// This field was commented out because of an invalid name. Please provide a valid one that matches [a-zA-Z][a-zA-Z0-9_]*
+  /// This field was commented out because of an invalid name. Please provide a valid one that matches [a-zA-Z][a-zA-Z0-9_]*
+  /// This field was commented out because of an invalid name. Please provide a valid one that matches [a-zA-Z][a-zA-Z0-9_]*
+  /// This field was commented out because of an invalid name. Please provide a valid one that matches [a-zA-Z][a-zA-Z0-9_]*
+  /// This field was commented out because of an invalid name. Please provide a valid one that matches [a-zA-Z][a-zA-Z0-9_]*
+  /// This field was commented out because of an invalid name. Please provide a valid one that matches [a-zA-Z][a-zA-Z0-9_]*
+  /// This field was commented out because of an invalid name. Please provide a valid one that matches [a-zA-Z][a-zA-Z0-9_]*
+  /// This field was commented out because of an invalid name. Please provide a valid one that matches [a-zA-Z][a-zA-Z0-9_]*
+  /// This field was commented out because of an invalid name. Please provide a valid one that matches [a-zA-Z][a-zA-Z0-9_]*
+  /// This field was commented out because of an invalid name. Please provide a valid one that matches [a-zA-Z][a-zA-Z0-9_]*
+  /// This field was commented out because of an invalid name. Please provide a valid one that matches [a-zA-Z][a-zA-Z0-9_]*
+  /// This field was commented out because of an invalid name. Please provide a valid one that matches [a-zA-Z][a-zA-Z0-9_]*
+  /// This field was commented out because of an invalid name. Please provide a valid one that matches [a-zA-Z][a-zA-Z0-9_]*
+  /// This field was commented out because of an invalid name. Please provide a valid one that matches [a-zA-Z][a-zA-Z0-9_]*
+  /// This field was commented out because of an invalid name. Please provide a valid one that matches [a-zA-Z][a-zA-Z0-9_]*
+  /// This field was commented out because of an invalid name. Please provide a valid one that matches [a-zA-Z][a-zA-Z0-9_]*
+  /// This field was commented out because of an invalid name. Please provide a valid one that matches [a-zA-Z][a-zA-Z0-9_]*
+  /// This field was commented out because of an invalid name. Please provide a valid one that matches [a-zA-Z][a-zA-Z0-9_]*
+  /// This field was commented out because of an invalid name. Please provide a valid one that matches [a-zA-Z][a-zA-Z0-9_]*
+  /// This field was commented out because of an invalid name. Please provide a valid one that matches [a-zA-Z][a-zA-Z0-9_]*
+  /// This field was commented out because of an invalid name. Please provide a valid one that matches [a-zA-Z][a-zA-Z0-9_]*
+  /// This field was commented out because of an invalid name. Please provide a valid one that matches [a-zA-Z][a-zA-Z0-9_]*
+  /// This field was commented out because of an invalid name. Please provide a valid one that matches [a-zA-Z][a-zA-Z0-9_]*
+  /// This field was commented out because of an invalid name. Please provide a valid one that matches [a-zA-Z][a-zA-Z0-9_]*
+  /// This field was commented out because of an invalid name. Please provide a valid one that matches [a-zA-Z][a-zA-Z0-9_]*
+  /// This field was commented out because of an invalid name. Please provide a valid one that matches [a-zA-Z][a-zA-Z0-9_]*
+  /// This field was commented out because of an invalid name. Please provide a valid one that matches [a-zA-Z][a-zA-Z0-9_]*
+  /// This field was commented out because of an invalid name. Please provide a valid one that matches [a-zA-Z][a-zA-Z0-9_]*
+  /// This field was commented out because of an invalid name. Please provide a valid one that matches [a-zA-Z][a-zA-Z0-9_]*
+  /// This field was commented out because of an invalid name. Please provide a valid one that matches [a-zA-Z][a-zA-Z0-9_]*
+  /// This field was commented out because of an invalid name. Please provide a valid one that matches [a-zA-Z][a-zA-Z0-9_]*
+  /// This field was commented out because of an invalid name. Please provide a valid one that matches [a-zA-Z][a-zA-Z0-9_]*
+  /// This field was commented out because of an invalid name. Please provide a valid one that matches [a-zA-Z][a-zA-Z0-9_]*
+  /// This field was commented out because of an invalid name. Please provide a valid one that matches [a-zA-Z][a-zA-Z0-9_]*
+  /// This field was commented out because of an invalid name. Please provide a valid one that matches [a-zA-Z][a-zA-Z0-9_]*
+  /// This field was commented out because of an invalid name. Please provide a valid one that matches [a-zA-Z][a-zA-Z0-9_]*
+  /// This field was commented out because of an invalid name. Please provide a valid one that matches [a-zA-Z][a-zA-Z0-9_]*
+  /// This field was commented out because of an invalid name. Please provide a valid one that matches [a-zA-Z][a-zA-Z0-9_]*
+  /// This field was commented out because of an invalid name. Please provide a valid one that matches [a-zA-Z][a-zA-Z0-9_]*
+  /// This field was commented out because of an invalid name. Please provide a valid one that matches [a-zA-Z][a-zA-Z0-9_]*
+  /// This field was commented out because of an invalid name. Please provide a valid one that matches [a-zA-Z][a-zA-Z0-9_]*
+  /// This field was commented out because of an invalid name. Please provide a valid one that matches [a-zA-Z][a-zA-Z0-9_]*
+  /// This field was commented out because of an invalid name. Please provide a valid one that matches [a-zA-Z][a-zA-Z0-9_]*
+  /// This field was commented out because of an invalid name. Please provide a valid one that matches [a-zA-Z][a-zA-Z0-9_]*
+  /// This field was commented out because of an invalid name. Please provide a valid one that matches [a-zA-Z][a-zA-Z0-9_]*
+  /// This field was commented out because of an invalid name. Please provide a valid one that matches [a-zA-Z][a-zA-Z0-9_]*
+  /// This field was commented out because of an invalid name. Please provide a valid one that matches [a-zA-Z][a-zA-Z0-9_]*
+  /// This field was commented out because of an invalid name. Please provide a valid one that matches [a-zA-Z][a-zA-Z0-9_]*
+  /// This field was commented out because of an invalid name. Please provide a valid one that matches [a-zA-Z][a-zA-Z0-9_]*
+  /// This field was commented out because of an invalid name. Please provide a valid one that matches [a-zA-Z][a-zA-Z0-9_]*
+  shiftID Int      @db.TinyInt
+  toShow  Boolean?
+
+  @@ignore
+}
+
+/// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+view view_area_list {
+  areaID    Int     @default(autoincrement()) @db.SmallInt
+  areaDesc  String? @db.NVarChar(50)
+  areaOrder Int?    @db.SmallInt
+
+  @@ignore
+}
+
+/// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+view view_location_list {
+  locID    Int     @default(autoincrement()) @db.TinyInt
+  buildloc String? @db.NVarChar(70)
+
+  @@ignore
+}
+
+/// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+view view_team_list {
+  teamID   Int     @default(autoincrement()) @db.TinyInt
+  teamName String? @db.NVarChar(20)
+
+  @@ignore
+}
+
+/// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+view view_shift_list {
+  rwt_date           DateTime? @db.DateTime
+  rte_empteam_desc   String?   @db.NVarChar(20)
+  rfs_empshift_desc  String?   @db.NVarChar(20)
+  rwt_workershift_id Int?      @db.TinyInt
+  rwt_workerteam_id  Int?      @db.TinyInt
+  rfs_empshift_id    Int       @db.TinyInt
+  rfs_datein         DateTime? @db.DateTime
+  rfs_dateout        DateTime? @db.DateTime
+
+  @@ignore
+}
+
+/// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+view view_ketsu_reason_list {
+  reasonID   Int     @unique @default(autoincrement()) @db.TinyInt
+  reasonDesc String? @db.NVarChar(50)
+}
+
+/// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+view view_ketsu_contact_list {
+  contactID   Int     @unique @default(autoincrement()) @db.TinyInt
+  contactDesc String? @db.NVarChar(50)
+}
+
+/// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+view view_hitomatome_employee_list {
+  temp_gid    String  @unique @db.NVarChar(9)
+  temp_status String? @db.NVarChar(25)
+}
+
+/// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+view view_antenna_area {
+  rwl_id            Int     @unique
+  rwl_rw_id         String? @db.NVarChar(50)
+  rwl_ant_id        Int?    @db.TinyInt
+  rwl_rwlocation_id Int?    @db.TinyInt
+  rwl_area_id       Int?    @db.SmallInt
+  rfa_area_desc     String? @db.NVarChar(50)
+}
+
+/// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+view view_date_selection {
+  DateSelect DateTime? @db.SmallDateTime
+
+  @@ignore
+}
+
+/// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+view view_kakari_list {
+  kakariID   Int     @default(autoincrement()) @db.TinyInt
+  kakariDesc String? @db.NVarChar(50)
+
+  @@ignore
+}
+
+/// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+view view_employee_email_list {
+  num_row BigInt @unique
+  GID     String  @db.NVarChar(9)
+  Name    String? @db.NVarChar(50)
+  Email   String? @db.NVarChar(50)
 }

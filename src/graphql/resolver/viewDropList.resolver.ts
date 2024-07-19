@@ -1,7 +1,7 @@
-import { DashBoardService } from './../../services/dashboard.services';
+import { DashBoardService } from '@services/dashboard.services';
 import { Query, Resolver } from '@nestjs/graphql';
-import { IViewDropList } from 'src/model/viewModel/viewTableModel';
-import { OViewDropList } from '../schema-model/viewDropList.model';
+import { IViewDropList } from '@viewModels/viewTableModel';
+import { OViewDropList } from '@schemaModels/viewDropList.model';
 
 @Resolver(() => OViewDropList)
 export class ViewDropListResolver {

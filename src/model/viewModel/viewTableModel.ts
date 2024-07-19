@@ -11,7 +11,7 @@ export interface IViewEmployeeBoard {
   areaID: number | null;
   areaDesc: string | null;
   alarm: boolean | null;
-  setAlarm: boolean | null;
+  setAlarm: string | null;
   setCount: boolean | null;
   locID: number | null;
   locDesc: string | null;
@@ -29,6 +29,9 @@ export interface IViewEmployeeBoard {
   divID: number | null;
   posID: number | null;
   statusOrder: number | null;
+  kakariID: number | null;
+  kakariDesc: string | null;
+  onShift: number | null;
 }
 
 export interface IPayloadEmployeeBoard {
@@ -42,16 +45,21 @@ export interface IPayloadEmployeeBoardWithRatio {
 export interface IEmployeeCountRatio {
   currentPercent?: string | null;
   currentWorkerCount?: number | null;
+  currentWorkerLessAwol?: number | null;
+  currentPercentWithAwol?: string | null;
   totalWorkerCount?: number | null;
+  currentWorkerOnShift: number | null;
 }
+
 export interface IEmployeeBoardArgs {
   search?: string | null;
-  areaID?: number | null;
-  teamID?: number | null;
-  locID?: number | null;
-  posID?: number | null;
-  divID?: number | null;
+  areaID?: number[] | null;
+  teamID?: number[] | null;
+  locID?: number[] | null;
+  posID?: number[] | null;
+  divID?: number[] | null;
   order?: number | null;
+  kakariID?: number[] | null;
   pageoffset?: number | null;
   pagenum?: number | null;
 }
@@ -80,18 +88,26 @@ export interface IDivisionList {
   divID: number;
   divName: string;
 }
+
+export interface IKakariList {
+  kakariID: number;
+  kakariDesc: string;
+}
+
 export interface IViewDropListQuery {
   ViewDropList: string;
 }
+
 export interface IViewDropList {
   IAreaList?: IAreaList[] | [];
   ILocationList?: ILocationList[] | [];
   ITeamList?: ITeamList[] | [];
   IPositionList?: IPositionList[] | [];
   IDivisionList?: IDivisionList[] | [];
+  IKakariList?: IKakariList[] | [];
 }
 
-export interface IReponseComment {
+export interface IStatusResponse {
   status?: string;
 }
 
@@ -116,4 +132,28 @@ export interface IPerAreaGraph {
 
 export interface IDateSelect {
   DateSelect: string;
+}
+
+export interface IKetsuLogCSVFormat {
+  アラート区分?: string;
+  日付: string;
+  実工程: string;
+  号棟: string;
+  実班: string;
+  直: string;
+  GID: string;
+  氏名: string;
+  第1勤怠確認者: string;
+  第2勤怠確認者: string;
+  第3勤怠確認者: string;
+  第4勤怠確認者: string;
+  第5勤怠確認者: string;
+  第6勤怠確認者: string;
+  対応確認者: string;
+  内容: string;
+  連絡有無: string;
+  係: string;
+  区分G: string;
+  recipient?: string;
+  confirm?: boolean;
 }

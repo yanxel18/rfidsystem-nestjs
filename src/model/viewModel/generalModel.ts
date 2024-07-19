@@ -12,3 +12,16 @@ export interface IErrorMsg {
   message: string;
   statusCode?: number;
 }
+
+export interface EmailCompose {
+  from?: string;
+  to?: string | string[];
+  subject?: string;
+  html?: string;
+  attachments?: EmailAttachments[];
+  cc?: string | string[];
+}
+export interface EmailAttachments {
+  filename?: string;
+  path?: string;
+}

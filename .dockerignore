@@ -1,0 +1,13 @@
+node_modules
+.vscode
+bat
+test
+*.log
+*.tmp
+*.swp
+.git
+.gitignore
+coverage
+dist
+test
+*.yml
